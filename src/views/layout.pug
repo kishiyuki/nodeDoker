@@ -1,0 +1,23 @@
+doctype html
+html
+	head
+		title= title
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+	body
+		header.row.bg-primary
+			.brand.col-md-2
+				h3.text-center.text-light(style="font-family:") 
+			.optional_pages.col-md-4.offset-md-4
+				.row
+				//-
+					a.header_btn.undo_td.col-md-4(href='/tech_diaries') Diaries
+					a.header_btn.undo_td.col-md-4(href='/communities') Communities
+
+					a.header_btn.undo_td.col-md-4(href='/mypage') MyPage
+			.authorizations.col-md-2
+				.row
+					a.header_btn.undo_td.col-md-6(href='/signin') Sign in
+					a.header_btn.undo_td.col-md-6(href='/signup') Sign up
+
+		block content

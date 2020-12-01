@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+  .row
+    .content.col-md-8.offset-md-2
+      .row
+        h1.col-md-12 Your datas here
+          p You can change any time when you want
+        h3.col-md-4.offset-md-6
+          a(href='/communities/new') Edit your profile
+        h3.col-md-2
+          a(href='/communities/new') Sign out
+  .row
+    .content.col-md-8.offset-md-2
+      table.col-md-12
+        tr.row
+          th.col-md-6 User Name
+          th.col-md-6 Email
+        tr.row
+          td.col-md-6= userName
+          td.col-md-6= email

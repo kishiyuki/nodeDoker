@@ -1,0 +1,12 @@
+create table users (id int auto_increment, user_name varchar(255), email varchar(255), password varchar(255), comments text, profession varchar(255), created_at datetime, updated_at datetime, index(id));
+create table events (id int auto_increment, event_name text, start_day datetime, last_day datetime, comments text, deadline datetime, created_at datetime, updated_at datetime, index(id));
+create table tags (id int auto_increment, tag varchar(255), index(id));
+create table events_tags (id int auto_increment, event_id int, tags_id int, index(id));
+create table events_students (id int auto_increment, event_id int, student_id int, index(id));
+create table events_teachers (id int auto_increment, event_id int, teacher_id int, index(id));
+create table evaluates (id int auto_increment, action int, think int, team int, comments text, txhash text, event_id int, sender_id int, receiver_id int, created_at datetime, index(id));
+create table free (id int auto_increment, freedom varchar(255), index(id));
+create table evaluates_free (id int auto_increment, evaluate_id int, free_id int, index(id));
+
+insert
+

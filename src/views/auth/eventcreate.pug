@@ -1,0 +1,37 @@
+extends ../layout
+
+block content
+  form(action='/eventcreate' method='POST')
+    .eventname
+      label イベント名
+      input(type='text' name='event_name')
+    .tag
+      label タグ
+
+      label ブロック
+      input(type='checkbox' name='tags' value="1")
+      label ビジネス
+      input(type='checkbox' name='tags' value="2")
+      label その他
+      input(type='checkbox' name='tags' value="3")
+    .start_day
+      label 開始日
+      input(type='date' name='start_day' value='2020-12-07')
+    .last_day
+      label 終了日
+      input(type='date' name='last_day' value='2020-12-10')
+    .deadline
+      label 締め切り日
+      input(type='date' name='deadline' value='2020-12-04')
+    .teacher
+      label 先生
+
+      label い
+      input(type='checkbox' name='teachers' value="2")
+      label え
+      input(type='checkbox' name='teachers' value="4")
+    .comments
+      label コメント
+      input(type='text' name='comments')
+    .signup
+      input(type='submit')
