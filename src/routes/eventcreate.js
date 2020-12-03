@@ -24,7 +24,6 @@ router.post('/', [body("event_name").not().isEmpty().withMessage("イベント�
 ],(req, res, next) =>{
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log("a");
     console.log(errors);
     res.redirect('/eventcreate');
   }　else {
@@ -44,11 +43,12 @@ router.post('/', [body("event_name").not().isEmpty().withMessage("イベント�
             for(var i = 0; i<req.body.tags.length; i++){
               connection.query('insert into events_tags set ? ;', {
                 event_id: events2[0].id,
-                tag_id: req.body.tags[i],
+                tags_id: req.body.tags[i],
               },function(err, success2){
                 if(err == null){
+                  console.log("a");
                 } else {
-                  res.redirect('/eventcreate');
+                  console.log(err);
                 }
               }
               );
@@ -59,8 +59,9 @@ router.post('/', [body("event_name").not().isEmpty().withMessage("イベント�
                 teacher_id: req.body.teachers[i],
               },function(err, success2){
                 if(err == null){
+                  console.log("b");
                 } else {
-                  res.redirect('/eventcreate');
+                  console.log(err);
                 }
               }
               );

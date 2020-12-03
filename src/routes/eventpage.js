@@ -13,7 +13,6 @@ router.get('/', function(req, res, next){
   let id2;
   var tagid = [];
   var tagname = [];
-  var serachname;
   var teachername =[];
   var bool;
   var c;
@@ -28,14 +27,14 @@ router.get('/', function(req, res, next){
 				}
     }
     connection.query('select * from events where id = ' + req.body.event_id + ';', function(err, events){
-      if(events != ""){
+      if(events != []){
         connection.query('select * from events_tags;', function(err, events_tags){
           connection.query('select * from tags;', function(err, tags){
             c = 0;
             tagid[0] = [];
             for(var j = 0; j<events_tags.length; j++){
               if(events[0].id == events_tags[j].event_id){
-                tagid[0][c] = events_tags[j].tag_id;
+                tagid[0][c] = events_tags[j].tags_id;
                 tagname[c] = tags[tagid[0][c]-1].tag;
                 c++;
               }
@@ -44,7 +43,7 @@ router.get('/', function(req, res, next){
           });
         });
         connection.query('select * from events_teachers where event_id = ' + req.body.event_id + ';', function(err, events_teachers){
-          if(events_teachers != ""){
+          if(events_teachers != []){
             searchname = events_teachers[0].teacher_id.toString();
             if(events_teachers.length > 1){
               for(var i=1; i<events_teachers.length; i++){
@@ -55,7 +54,7 @@ router.get('/', function(req, res, next){
               for(var i=0; i<teachers.length; i++){
                 teachername[i] = teachers[i].user_name;
               }
-              events[0]["teachers"] = tagname;
+              events[0]["teachers"] = teachername;
             });
           }
         });
@@ -67,7 +66,7 @@ router.get('/', function(req, res, next){
             if(events[0].deadline >= new Date()){
               console.log("未参加");
             } else {
-              console.log("締め切ってます");
+              console.log("締め切ってるのでみれないよ");
             }
           } else {
             bool = false;
@@ -79,10 +78,10 @@ router.get('/', function(req, res, next){
           }
         });
       } else if (profession2 == "teacher"){
-        connection.query("select * from events_teachers where event_id = " + eventid + " and teacher_id =" + id2.toString() + ";", function(err, events_teachers){
-          if(events_teachers == []){
+        connection.query("select * from events_teachers where event_id = " + eventid + " and teacher_id =" + id2.toString() + ";", function(err, events_teachers2){
+          if(events_teachers2 == []){
             bool = true;
-            console.log("未参加");
+            console.log("参加してないから見れないよ");
           } else {
             bool = false;
             console.log("参加者リスト");
@@ -105,32 +104,36 @@ router.post('/', function(req, res, next){
         },
         function(err, success){
           if (err == null) {
-            console.log("成功");
+            console.log("成功したのでイベントallに戻る");
             // res.redirect('/eventall');
           } else {
+            console.log("ミスしたのでイベントページに戻る");
             // res.redirect('/eventall');
             console.log(err);
           }
         }
         );
       });
-    } else if (users[0].profession = "teacher"){
-      connection.query('select * from events_teachers;', function(err, events_teachers){
-        connection.query('insert into events_teachers set ? ;', {
-          event_id: req.body.event_id,
-          teacher_id: users[0].id
-        },
-        function(err, success){
-          if (err == null) {
-            console.log("成功");
-            // res.redirect('/eventall');
-          } else {
-            // res.redirect('/eventall');
-            console.log(err);
-          }
-        }
-        );
-      });
+    // } else if (users[0].profession = "teacher"){
+    //   connection.query('select * from events_teachers;', function(err, events_teachers){
+    //     connection.query('insert into events_teachers set ? ;', {
+    //       event_id: req.body.event_id,
+    //       teacher_id: users[0].id
+    //     },
+    //     function(err, success){
+    //       if (err == null) {
+    //         console.log("成功");
+    //         // res.redirect('/eventall');
+    //       } else {
+    //         // res.redirect('/eventall');
+    //         console.log(err);
+    //       }
+    //     }
+    //     );
+    //   });
+    // }
+    } else {
+      console.log("参加資格がないのでイベントページに戻る");
     }
   });
 });
