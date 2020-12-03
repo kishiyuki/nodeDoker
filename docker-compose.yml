@@ -17,6 +17,17 @@ services:
     networks:
       - backend
 
+  iost:
+    image: iostio/iost-node:2.5.0-dbb56b7
+    #環境変数設定。タイムゾーンを日本時間に設定。
+    environment:
+      - TZ=Asia/Tokyo
+    ports:
+      - '30000-30003:30000-30003'
+    networks:
+      - backend
+
+
   app:
     image: node:14.15
     env_file: ./app.env
@@ -36,9 +47,11 @@ services:
     #mysqlに依存しているので、mysqlコンテナ作成後、appコンテナが作られる。
     depends_on:
       - mysql
+      - iost
 
 networks:
   backend:
+    external: true
 
 volumes:
   mysqldata:
