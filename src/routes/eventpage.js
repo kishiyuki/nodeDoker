@@ -13,21 +13,33 @@ router.get('/', function(req, res, next){
   let id2;
   var tagid = [];
   var tagname = [];
+  var today = getStringFromDate(new Date());
+  var today2 = new Date(today);
   var teachername =[];
-  var bool;
+  var branch;
   var c;
-  console.log(req);
+  var deadline;
+  var lastday;
+  var lastday2;
   connection.query('select * from users;', function(err, users) {
-		if (req.user) {
-				for (i = 0; i < users.length; i++) {
-					if(req.user.email == users[i].email){
-            id2 = users[i].id;
-						profession2 = users[i].profession;
-	        }
-				}
-    }
+		// if (req.user) {
+		// 		for (i = 0; i < users.length; i++) {
+		// 			if(req.user.email == users[i].email){
+    //         id2 = users[i].id;
+		// 				profession2 = users[i].profession;
+	  //       }
+		// 		}
+    // }
+    if (req.user.email) {
+      for (i = 0; i < users.length; i++) {
+        if(req.user.email == users[i].email){
+          id2 = users[i].id;
+          profession2 = users[i].profession;
+        }
+      }
+  }
     connection.query('select * from events where id = ' + req.body.event_id + ';', function(err, events){
-      if(events != []){
+      if(events.length != 0){
         connection.query('select * from events_tags;', function(err, events_tags){
           connection.query('select * from tags;', function(err, tags){
             c = 0;
@@ -43,7 +55,7 @@ router.get('/', function(req, res, next){
           });
         });
         connection.query('select * from events_teachers where event_id = ' + req.body.event_id + ';', function(err, events_teachers){
-          if(events_teachers != []){
+          if(events_teachers.length != 0){
             searchname = events_teachers[0].teacher_id.toString();
             if(events_teachers.length > 1){
               for(var i=1; i<events_teachers.length; i++){
@@ -51,39 +63,47 @@ router.get('/', function(req, res, next){
               }
             }
             connection.query('select * from users where id = ' + searchname + ';', function(err, teachers){
-              for(var i=0; i<teachers.length; i++){
-                teachername[i] = teachers[i].user_name;
+              if(teachers.length != 0){
+                for(var i=0; i<teachers.length; i++){
+                  teachername[i] = teachers[i].user_name;
+                }
+                events[0]["teachers"] = teachername;
               }
-              events[0]["teachers"] = teachername;
             });
           }
         });
       }
+      lastday = getStringFromDate3(events[0].last_day);
+      lastday2 = new Date(lastday);
+      deadline = new Date(events[0].deadline);
       if(profession2 == "student"){
         connection.query("select * from events_students where event_id = " + req.body.event_id + " and student_id =" + id2.toString() + ";", function(err, events_students){
-          if(events_students == []){
-            bool = true;
-            if(events[0].deadline >= new Date()){
-              console.log("未参加");
+          console.log(events_students);
+          if(events_students.length == 0){
+            if(deadline >= today2){
+              branch = 0;
+              console.log("参加できるよ");
             } else {
+              branch = 1;
               console.log("締め切ってるのでみれないよ");
             }
           } else {
-            bool = false;
-            if(events[0].last_day >= new Date()){
-              console.log("参加者リスト");
+            if(lastday2 >= today2){
+              branch = 2;
+              console.log("参加者リストのみ");
             } else {
-              console.log("評価確認");
+              branch = 3;
+              console.log("評価確認と参加者リスト");
             }
           }
         });
       } else if (profession2 == "teacher"){
-        connection.query("select * from events_teachers where event_id = " + eventid + " and teacher_id =" + id2.toString() + ";", function(err, events_teachers2){
-          if(events_teachers2 == []){
-            bool = true;
+        connection.query("select * from events_teachers where event_id = " + req.body.event_id + " and teacher_id =" + id2.toString() + ";", function(err, events_teachers2){
+          if(events_teachers2.length == 0){
+            bool = 1;
             console.log("参加してないから見れないよ");
           } else {
-            bool = false;
+            bool = 2;
             console.log("参加者リスト");
           }
         });
@@ -137,4 +157,47 @@ router.post('/', function(req, res, next){
     }
   });
 });
+function getStringFromDate(date) {
+
+  var year_str = date.getFullYear();
+  //月だけ+1すること
+  var month_str = 1 + date.getMonth();
+  var day_str = date.getDate();
+  var hour_str = date.getHours();
+  var minute_str = date.getMinutes();
+  var second_str = date.getSeconds();
+  
+  
+  format_str = 'YYYY-MM-DD hh:mm:ss';
+  format_str = format_str.replace(/YYYY/g, year_str);
+  format_str = format_str.replace(/MM/g, month_str);
+  format_str = format_str.replace(/DD/g, day_str);
+  format_str = format_str.replace(/hh/g, hour_str);
+  format_str = format_str.replace(/mm/g, minute_str);
+  format_str = format_str.replace(/ss/g, second_str);
+  
+  return format_str;
+  };
+
+  function getStringFromDate3(date) {
+
+    var year_str = date.getFullYear();
+    //月だけ+1すること
+    var month_str = 1 + date.getMonth();
+    var day_str = date.getDate() + 3;
+    var hour_str = date.getHours();
+    var minute_str = date.getMinutes();
+    var second_str = date.getSeconds();
+    
+    
+    format_str = 'YYYY-MM-DD hh:mm:ss';
+    format_str = format_str.replace(/YYYY/g, year_str);
+    format_str = format_str.replace(/MM/g, month_str);
+    format_str = format_str.replace(/DD/g, day_str);
+    format_str = format_str.replace(/hh/g, hour_str);
+    format_str = format_str.replace(/mm/g, minute_str);
+    format_str = format_str.replace(/ss/g, second_str);
+    
+    return format_str;
+    };
 module.exports = router;

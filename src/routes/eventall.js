@@ -15,7 +15,7 @@ router.get('/', function(req, res, next){
     connection.query("select * from events;", function(err, events){
       connection.query('select * from events_tags;', function(err, events_tags){
         connection.query('select * from tags;', function(err, tags){
-          if(events != []){
+          if(events.length != 0){
             for(var i = 0; i<events.length; i++){
               tagid[i] = [];
               c = 0;
@@ -44,6 +44,7 @@ router.get('/', function(req, res, next){
 router.post('/', function(req, res, next){
   var tagid = [];
   var c;
+  var today = getStringFromDate(new Date());
   if(req.body.tags != null){
     var i = 1;
     var a = "'" + req.body.tags[0] + "'";
@@ -51,11 +52,13 @@ router.post('/', function(req, res, next){
       a = a + ", '" + req.body.tags[j] + "'";
       i++;
     }
-    var b = "SELECT * from events e WHERE " + i + " = (SELECT COUNT(*) from events_tags INNER JOIN tags ON events_tags.tag_id = tags.id WHERE e.id = events_tags.event_id AND tags.tag IN (" + a + "));";
+    console.log(a);
+    console.log(i);
+    var b = "SELECT * from events e WHERE " + i + " = (SELECT COUNT(*) from events_tags INNER JOIN tags ON events_tags.tags_id = tags.id WHERE e.id = events_tags.event_id AND tags.tag IN (" + a + "));";
     connection.query(b, function(err, events){
       connection.query('select * from events_tags;', function(err, events_tags){
         connection.query('select * from tags;', function(err, tags){
-          if(events != []){
+          if(events.length != 0){
             for(var i = 0; i<events.length; i++){
               tagid[i] = [];
               c = 0;
@@ -79,7 +82,7 @@ router.post('/', function(req, res, next){
     connection.query('SELECT * FROM events WHERE start_day BETWEEN "' + req.body.startday + '" AND "' + req.body.lastday.toString() + '";', function(err, events){
       connection.query('select * from events_tags;', function(err, events_tags){
         connection.query('select * from tags;', function(err, tags){
-          if(events != []){
+          if(events.length != 0){
             for(var i = 0; i<events.length; i++){
               tagid[i] = [];
               c = 0;
@@ -103,7 +106,7 @@ router.post('/', function(req, res, next){
     connection.query('SELECT * FROM events WHERE start_day >"' + req.body.startday + '";', function(err, events){
       connection.query('select * from events_tags;', function(err, events_tags){
         connection.query('select * from tags;', function(err, tags){
-          if(events != []){
+          if(events.length != 0){
             for(var i = 0; i<events.length; i++){
               tagid[i] = [];
               c = 0;
@@ -124,10 +127,10 @@ router.post('/', function(req, res, next){
       });
     });
   } else if(req.body.startday == null && req.body.lastday !=null){
-    connection.query('SELECT * FROM events WHERE start_day BETWEEN "' + new Date() + '" AND "' + req.body.lastday.toString() + '";', function(err, events){
+    connection.query('SELECT * FROM events WHERE start_day BETWEEN "' + today + '" AND "' + req.body.lastday.toString() + '";', function(err, events){
       connection.query('select * from events_tags;', function(err, events_tags){
         connection.query('select * from tags;', function(err, tags){
-          if(events != []){
+          if(events.length != 0){
             for(var i = 0; i<events.length; i++){
               tagid[i] = [];
               c = 0;
@@ -148,10 +151,10 @@ router.post('/', function(req, res, next){
       });
     });
   } else if(req.body.search != null){
-    connection.query("select * from events where event_name like '" + req.body.serach +"%';", function(err, events){
+    connection.query("select * from events where event_name like '" + req.body.search +"%';", function(err, events){
       connection.query('select * from events_tags;', function(err, events_tags){
         connection.query('select * from tags;', function(err, tags){
-          if(events != []){
+          if(events.length != 0){
             for(var i = 0; i<events.length; i++){
               tagid[i] = [];
               c = 0;
@@ -175,7 +178,7 @@ router.post('/', function(req, res, next){
     connection.query("select * from events;", function(err, events){
       connection.query('select * from events_tags;', function(err, events_tags){
         connection.query('select * from tags;', function(err, tags){
-          if(events != []){
+          if(events.length != 0){
             for(var i = 0; i<events.length; i++){
               tagid[i] = [];
               c = 0;
@@ -198,4 +201,25 @@ router.post('/', function(req, res, next){
   }
   // res.render('auth/eventall', {events});
 });
+function getStringFromDate(date) {
+
+  var year_str = date.getFullYear();
+  //月だけ+1すること
+  var month_str = 1 + date.getMonth();
+  var day_str = date.getDate();
+  var hour_str = date.getHours();
+  var minute_str = date.getMinutes();
+  var second_str = date.getSeconds();
+  
+  
+  format_str = 'YYYY-MM-DD hh:mm:ss';
+  format_str = format_str.replace(/YYYY/g, year_str);
+  format_str = format_str.replace(/MM/g, month_str);
+  format_str = format_str.replace(/DD/g, day_str);
+  format_str = format_str.replace(/hh/g, hour_str);
+  format_str = format_str.replace(/mm/g, minute_str);
+  format_str = format_str.replace(/ss/g, second_str);
+  
+  return format_str;
+};
 module.exports = router;

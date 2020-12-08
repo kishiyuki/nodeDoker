@@ -55,7 +55,7 @@ router.get('/', function(req, res, next) {
 			} else if(profession2 == "student"){
         connection.query("select * from events_students where student_id = " + id2.toString() + ";", function(err, ev){
           console.log(ev);
-          if(ev != []){
+          if(ev.length != 0){
             if(ev.length > 1){
             searchid = ev[0].event_id.toString();
               for(var i =1; i<ev.length; i++){
@@ -64,7 +64,7 @@ router.get('/', function(req, res, next) {
             }
           }
           connection.query("select * from events where id = " + searchid + ";", function(err, events){
-            if(events != []){
+            if(events.length != 0){
               connection.query('select * from events_tags;', function(err, events_tags){
                 connection.query('select * from tags;', function(err, tags){
                   for(var i = 0; i<events.length; i++){
@@ -82,7 +82,7 @@ router.get('/', function(req, res, next) {
                   }
                   // console.log(events);
                   connection.query('select * from users where profession = "student";', function(err, studentid){
-                    if(studentid != []){
+                    if(studentid.length != 0){
                       searchname = " and (sender_id = " + studentid[0].id.toString();
                       for(var i = 1; i<studentid.length; i++){
                       searchname = searchname + " or sender_id = " + studentid[i].id.toString();
@@ -92,7 +92,7 @@ router.get('/', function(req, res, next) {
                     console.log(searchname);
                     connection.query('select * from evaluates where receiver_id = ' + id2.toString() + searchname + ';', function(err, student){
                       console.log(student);
-                      if(student != []){
+                      if(student.length != 0){
                         for(var i = 0; i<student.length; i++){
                           stotalactionscore = stotalactionscore + student[i].action;
                           stotalthinkscore = stotalthinkscore + student[i].think;
@@ -119,7 +119,7 @@ router.get('/', function(req, res, next) {
                               count:0
                             }
                           }
-                          if(student != []){
+                          if(student.length != 0){
                           for(var i = 0; i<student.length; i++){
                             for(var j = 0; j<evaluates_free.length; j++){
                               if(student[i].id == evaluates_free[j].evaluate_id){
@@ -153,7 +153,7 @@ router.get('/', function(req, res, next) {
                           }
                           }
                           connection.query('select * from users where profession = "teacher";', function(err, teacherid){
-                            if(teacherid != []){
+                            if(teacherid.length != 0){
                               searchname2 = " and (sender_id = " + teacherid[0].id.toString();
                               for(var i = 1; i<teacherid.length; i++){
                               searchname2 = searchname2 + " or sender_id = " + teacherid[i].id.toString();
@@ -161,7 +161,7 @@ router.get('/', function(req, res, next) {
                               searchname2 = searchname2 + ")"
                             }
                             connection.query('select * from evaluates where receiver_id = ' + id2.toString() + searchname2 + ';', function(err, teacher){
-                              if(teacher != []){
+                              if(teacher.length != 0){
                                 for(var i = 0; i<teacher.length; i++){
                                   ttotalactionscore = ttotalactionscore + teacher[i].action;
                                   ttotalthinkscore = ttotalthinkscore + teacher[i].think;
@@ -185,7 +185,7 @@ router.get('/', function(req, res, next) {
                                     count:0
                                   }
                                 }
-                                if(teacher != []){
+                                if(teacher.length != 0){
                                 for(var i = 0; i<teacher.length; i++){
                                   for(var j = 0; j<evaluates_free.length; j++){
                                     if(teacher[i].id == evaluates_free[j].evaluate_id){
@@ -251,7 +251,7 @@ router.get('/', function(req, res, next) {
           });
 				} else if(profession2 == "teacher"){
           connection.query("select * from events_teachers where teacher_id = " + id2.toString() + ";", function(err, ev){
-            if(ev != []){
+            if(ev.length != 0){
               searchid = ev[0].event_id.toString();
               if(ev.length > 1){
                 for(var i =1; i<ev.length; i++){
@@ -260,7 +260,7 @@ router.get('/', function(req, res, next) {
               }
             }
             connection.query("select * from events where id = " + searchid + ";", function(err, events){
-              if(events != []){
+              if(events.length != 0){
                 connection.query('select * from events_tags;', function(err, events_tags){
                   connection.query('select * from tags;', function(err, tags){
                     for(var i = 0; i<events.length; i++){

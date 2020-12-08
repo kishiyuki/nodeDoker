@@ -26,9 +26,9 @@ let signupRouter = require('./routes/signup');
 let signinRouter = require('./routes/signin');
 let eventcreateRouter = require('./routes/eventcreate');
 let evaluateRouter = require('./routes/evaluate');
-// let eventpageRouter = require('./routes/eventpage');
-// let eventallRouter = require('./routes/eventall');
-// let communitiesRouter = require('./routes/communities');
+let participatesRouter = require('./routes/participates');
+let eventpageRouter = require('./routes/eventpage');
+let eventallRouter = require('./routes/eventall');
 let myPageRouter = require('./routes/mypage');
 
 let app = express();
@@ -148,9 +148,9 @@ app.use('/signup', signupRouter);
 app.use('/signin', signinRouter);
 app.use('/eventcreate', eventcreateRouter);
 app.use('/evaluate', evaluateRouter);
-// app.use('/eventall', eventallRouter);
-// app.use('/eventpage', eventpageRouter);
-// app.use('/communities', communitiesRouter);
+app.use('/participates', participatesRouter);
+app.use('/eventall', eventallRouter);
+app.use('/eventpage', eventpageRouter);
 app.use('/mypage', myPageRouter);
 
 // signup時にsigninを実行したい
