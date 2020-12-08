@@ -13,15 +13,14 @@ services:
       #mysqlのデフォルト設定ファイルを上書き。:roでコンテナ側からは読み取り専用設定。
       - ./mysql/conf/:/etc/mysql/conf.d/:ro
       #mysqldataにマウントすることで、コンテナを削除してもデーターは残るように設定。
-      - mysqldata:/var/lib/mysql
+      - ./mysqldata:/var/lib/mysql
     networks:
       - backend
 
   iost:
-    image: iostio/iost-node:2.5.0-dbb56b7
+    image: iostio/iost-node:3.4.0-d8e9b5a
+
     #環境変数設定。タイムゾーンを日本時間に設定。
-    environment:
-      - TZ=Asia/Tokyo
     ports:
       - '30000-30003:30000-30003'
     networks:
