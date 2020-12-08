@@ -1,0 +1,19 @@
+{
+  "name": "sotu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Sk.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bitcoinjs-lib": "^5.1.7",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.0.0",
+    "iost": "^0.1.22",
+    "iota": "0.0.0",
+    "regtest": "0.0.3"
+  }
+}
