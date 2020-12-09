@@ -30,6 +30,7 @@ let participatesRouter = require('./routes/participates');
 let eventpageRouter = require('./routes/eventpage');
 let eventallRouter = require('./routes/eventall');
 let myPageRouter = require('./routes/mypage');
+let eConfirmationRouter = require('./routes/eConfirmation');
 
 let app = express();
 
@@ -152,6 +153,7 @@ app.use('/participates', participatesRouter);
 app.use('/eventall', eventallRouter);
 app.use('/eventpage', eventpageRouter);
 app.use('/mypage', myPageRouter);
+app.use('/eConfirmation', eConfirmationRouter);
 
 // signup時にsigninを実行したい
 // 現状はsignupした後、signinページから入らないといけない

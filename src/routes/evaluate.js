@@ -7,7 +7,7 @@ const KeyPair = require('iost/lib/crypto/key_pair');
 const bs58 = require('bs58');
 const crypto = require('crypto');
 const iost = new IOST({
-  host: 'http://192.168.16.3:30001',
+  host: 'http://192.168.16.2:30001',
   chainId: 1020,
   gasLimit: 1000000
 });
