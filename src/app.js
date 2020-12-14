@@ -165,7 +165,7 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log(errors);
-      res.redirect('/signup');
+      // res.redirect('/signup');
     }else {
       connection.query('select * from users;', function(err, users){
         connection.query('insert into users set ? ;', {
@@ -178,9 +178,9 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
         },
         function(err, success){
           if (err == null) {
-            res.redirect('/signin');
+            // res.redirect('/signin');
           } else {
-            res.redirect('/signup');
+            // res.redirect('/signup');
             console.log(err);
           }
         }
@@ -201,7 +201,7 @@ app.post('/signin',
 				credentials: 'include'
 			}
 		).then(function(){
-			res.redirect('/');
+			// res.redirect('/');
 		}).catch(function(e){
 			console.log(e);
 		});

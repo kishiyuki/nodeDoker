@@ -1,39 +1,41 @@
 var express = require('express');
 var router = express.Router();
-let mysql = require('mysql2');
+const mysql = require('mysql');
+const util = require('util');
 let connection = mysql.createConnection({
   host: 'mysql',
   user: 'root',
   password: 'secret',
   database: 'portfoliopj'
 });
-
+const query = util.promisify(connection.query).bind(connection);
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var tagid = [];
-  var c;
-  var searchid ="99999";
-  var searchname =" and sender_id = 99999";
-  var searchname2 =" and sender_id = 99999";
+  let eventlist;
+  let tagid = [];
+  let c;
+  let searchid ="99999";
+  let searchname =" and sender_id = 99999";
+  let searchname2 =" and sender_id = 99999";
   const ss = Array.from({ length: 3 }, () => 0);
   const ts = Array.from({ length: 3 }, () => 0);
-  var tactionscore = 0;
-  var tthinkscore = 0;
-  var tteamscore = 0;
-  var ttotalactionscore = 0;
-  var ttotalthinkscore = 0;
-  var ttotalteamscore = 0;
-  var sactionscore = 0;
-  var sthinkscore = 0;
-  var steamscore = 0;
-  var stotalactionscore = 0;
-  var stotalthinkscore = 0;
-  var stotalteamscore = 0;
+  let tactionscore = 0;
+  let tthinkscore = 0;
+  let tteamscore = 0;
+  let ttotalactionscore = 0;
+  let ttotalthinkscore = 0;
+  let ttotalteamscore = 0;
+  let sactionscore = 0;
+  let sthinkscore = 0;
+  let steamscore = 0;
+  let stotalactionscore = 0;
+  let stotalthinkscore = 0;
+  let stotalteamscore = 0;
   const social = Array.from({ length: 12 }, () => 0);
   const social2 = Array.from({ length: 12 }, () => 0);
   
-
-	connection.query('select * from users;', function(err, users) {
+  async function getUser(){
+    const users = await query('select * from users;');
 		if (req.user) {
 			let username = "";
 			let profession2 = "";
@@ -44,262 +46,208 @@ router.get('/', function(req, res, next) {
 	        username = users[i].user_name;
 					profession2 = users[i].profession;
 	      }
-			}
-			if(profession2 == "school"){
-        connection.query('select * from events;', function(err, events){
-      	  res.render('auth/mypage1', {
-        	  userName: username,
-        	  email: req.user.email
-      	  });
-        });
-			} else if(profession2 == "student"){
-        connection.query("select * from events_students where student_id = " + id2.toString() + ";", function(err, ev){
-          console.log(ev);
-          if(ev.length != 0){
-            if(ev.length > 1){
-            searchid = ev[0].event_id.toString();
-              for(var i =1; i<ev.length; i++){
-                searchid = searchid + " or id = " + ev[i].event_id.toString();
-              }
+      }
+    }
+  }
+
+  async function school(){
+    if(profession2 == "school"){
+      const events = await query('select * from events;');
+        // res.render('auth/mypage1', {
+        //   userName: username,
+        //   email: req.user.email
+        // });
+    }
+  }
+
+  async function studentEvent(){
+	  if(profession2 == "student"){
+      const ev = await query("select * from events_students where student_id = " + id2.toString() + ";");
+      if(ev.length != 0){
+        searchid = ev[0].event_id.toString();
+        if(ev.length > 1){
+          for(var i =1; i<ev.length; i++){
+            searchid = searchid + " or id = " + ev[i].event_id.toString();
+          }
+        }
+      }
+      const events = await query("select * from events where id = " + searchid + ";");
+      if(events.length != 0){
+        const events_tags = await query('select * from events_tags;');
+        const tags = await query('select * from tags;');
+        for(var i = 0; i<events.length; i++){
+          tagid[i] = [];
+          c = 0;
+          var tagname = [];
+          for(var j = 0; j<events_tags.length; j++){
+            if(events[i].id == events_tags[j].event_id){
+              tagid[i][c] = events_tags[j].tags_id;
+              tagname[c] = tags[tagid[i][c]-1].tag;
+              c++;
             }
           }
-          connection.query("select * from events where id = " + searchid + ";", function(err, events){
-            if(events.length != 0){
-              connection.query('select * from events_tags;', function(err, events_tags){
-                connection.query('select * from tags;', function(err, tags){
-                  for(var i = 0; i<events.length; i++){
-                    tagid[i] = [];
-                    c = 0;
-                    var tagname = [];
-                    for(var j = 0; j<events_tags.length; j++){
-                      if(events[i].id == events_tags[j].event_id){
-                        tagid[i][c] = events_tags[j].tags_id;
-                        tagname[c] = tags[tagid[i][c]-1].tag;
-                        c++;
-                      }
-                    }
-                    events[i]["tags"] = tagname;
-                  }
-                  // console.log(events);
-                  connection.query('select * from users where profession = "student";', function(err, studentid){
-                    if(studentid.length != 0){
-                      searchname = " and (sender_id = " + studentid[0].id.toString();
-                      for(var i = 1; i<studentid.length; i++){
-                      searchname = searchname + " or sender_id = " + studentid[i].id.toString();
-                      }
-                      searchname = searchname + ")"
-                    }
-                    console.log(searchname);
-                    connection.query('select * from evaluates where receiver_id = ' + id2.toString() + searchname + ';', function(err, student){
-                      console.log(student);
-                      if(student.length != 0){
-                        for(var i = 0; i<student.length; i++){
-                          stotalactionscore = stotalactionscore + student[i].action;
-                          stotalthinkscore = stotalthinkscore + student[i].think;
-                          stotalteamscore = stotalteamscore + student[i].team;
-                        }
-                          sactionscore = Math.round(stotalactionscore/student.length*10) /10;
-                          sthinkscore = Math.round(stotalthinkscore/student.length*10) /10;
-                          steamscore = Math.round(stotalteamscore/student.length*10) /10;
-                      }
-                      ss[0] = {
-                        action:sactionscore
-                      }
-                      ss[1] = {
-                        think:sthinkscore
-                      }
-                      ss[2] = {
-                        team:steamscore
-                      }
-                      connection.query('select * from evaluates_free;', function(err, evaluates_free){
-                        connection.query('select * from free;', function(err, free){
-                          for(var i = 0; i<free.length; i++){
-                            social[i] = {
-                              name:free[i].freedom,　
-                              count:0
-                            }
-                          }
-                          if(student.length != 0){
-                          for(var i = 0; i<student.length; i++){
-                            for(var j = 0; j<evaluates_free.length; j++){
-                              if(student[i].id == evaluates_free[j].evaluate_id){
-                                if(evaluates_free[j].free_id == 1){
-                                  social[0].count++;
-                                } else if(evaluates_free[j].free_id == 2){
-                                  social[1].count++;
-                                } else if(evaluates_free[j].free_id == 3){
-                                  social[2].count++;
-                                } else if(evaluates_free[j].free_id == 4){
-                                  social[3].count++;
-                                } else if(evaluates_free[j].free_id == 5){
-                                  social[4].count++;
-                                } else if(evaluates_free[j].free_id == 6){
-                                  social[5].count++;
-                                } else if(evaluates_free[j].free_id == 7){
-                                  social[6].count++;
-                                } else if(evaluates_free[j].free_id == 8){
-                                  social[7].count++;
-                                } else if(evaluates_free[j].free_id == 9){
-                                  social[8].count++;
-                                } else if(evaluates_free[j].free_id == 10){
-                                  social[9].count++;
-                                } else if(evaluates_free[j].free_id == 11){
-                                  social[10].count++;
-                                } else if(evaluates_free[j].free_id == 12){
-                                  social[11].count++;
-                                }
-                              }
-                            }
-                          }
-                          }
-                          connection.query('select * from users where profession = "teacher";', function(err, teacherid){
-                            if(teacherid.length != 0){
-                              searchname2 = " and (sender_id = " + teacherid[0].id.toString();
-                              for(var i = 1; i<teacherid.length; i++){
-                              searchname2 = searchname2 + " or sender_id = " + teacherid[i].id.toString();
-                              }
-                              searchname2 = searchname2 + ")"
-                            }
-                            connection.query('select * from evaluates where receiver_id = ' + id2.toString() + searchname2 + ';', function(err, teacher){
-                              if(teacher.length != 0){
-                                for(var i = 0; i<teacher.length; i++){
-                                  ttotalactionscore = ttotalactionscore + teacher[i].action;
-                                  ttotalthinkscore = ttotalthinkscore + teacher[i].think;
-                                  ttotalteamscore = ttotalteamscore + teacher[i].team;
-                                }
-                                tactionscore = Math.round(ttotalactionscore/teacher.length*10) /10;
-                                tthinkscore = Math.round(ttotalthinkscore/teacher.length*10) /10;
-                                tteamscore = Math.round(ttotalteamscore/teacher.length*10) /10;
-                                ts[0] = {
-                                  action:tactionscore
-                                }
-                                ts[1] = {
-                                  think:tthinkscore
-                                }
-                                ts[2] = {
-                                  team:tteamscore
-                                }
-                                for(var i = 0; i<free.length; i++){
-                                  social2[i] = {
-                                    name:free[i].freedom,
-                                    count:0
-                                  }
-                                }
-                                if(teacher.length != 0){
-                                for(var i = 0; i<teacher.length; i++){
-                                  for(var j = 0; j<evaluates_free.length; j++){
-                                    if(teacher[i].id == evaluates_free[j].evaluate_id){
-                                      if(evaluates_free[j].free_id == 1){
-                                        social2[0].count++;
-                                      } else if(evaluates_free[j].free_id == 2){
-                                        social2[1].count++;
-                                      } else if(evaluates_free[j].free_id == 3){
-                                        social2[2].count++;
-                                      } else if(evaluates_free[j].free_id == 4){
-                                        social2[3].count++;
-                                      } else if(evaluates_free[j].free_id == 5){
-                                        social2[4].count++;
-                                      } else if(evaluates_free[j].free_id == 6){
-                                        social2[5].count++;
-                                      } else if(evaluates_free[j].free_id == 7){
-                                        social2[6].count++;
-                                      } else if(evaluates_free[j].free_id == 8){
-                                        social2[7].count++;
-                                      } else if(evaluates_free[j].free_id == 9){
-                                        social2[8].count++;
-                                      } else if(evaluates_free[j].free_id == 10){
-                                        social2[9].count++;
-                                      } else if(evaluates_free[j].free_id == 11){
-                                        social2[10].count++;
-                                      } else if(evaluates_free[j].free_id == 12){
-                                        social2[11].count++;
-                                      }
-                                    }
-                                  }
-                                }
-                                }
-                                social.sort(compare);
-                                social2.sort(compare);
-                                console.log(events);
-                                console.log(ss);
-                                console.log(ts);
-                                console.log(social);
-                                console.log(social2);
-                                res.render('auth/mypage2', {
-                                userName: username,
-                                email: req.user.email,
-                                events
-                                });
-                              }
-                            });
-                          });
-                        });
-                      });
-                    });
-                  });
-                });
-              });
-              }else{
-                console.log(events); 
-                res.render('auth/mypage2', {
-                userName: username,
-                email: req.user.email,
-                events
-                });
-              }
-            });
-          });
-				} else if(profession2 == "teacher"){
-          connection.query("select * from events_teachers where teacher_id = " + id2.toString() + ";", function(err, ev){
-            if(ev.length != 0){
-              searchid = ev[0].event_id.toString();
-              if(ev.length > 1){
-                for(var i =1; i<ev.length; i++){
-                  searchid = searchid + " or id = " + ev[i].event_id.toString();
-                }
-              }
-            }
-            connection.query("select * from events where id = " + searchid + ";", function(err, events){
-              if(events.length != 0){
-                connection.query('select * from events_tags;', function(err, events_tags){
-                  connection.query('select * from tags;', function(err, tags){
-                    for(var i = 0; i<events.length; i++){
-                      tagid[i] = [];
-                      c = 0;
-                      var tagname = [];
-                      for(var j = 0; j<events_tags.length; j++){
-                        if(events[i].id == events_tags[j].event_id){
-                          tagid[i][c] = events_tags[j].tags_id;
-                          tagname[c] = tags[tagid[i][c]-1].tag;
-                          c++;
-                        }
-                      }
-                      events[i]["tags"] = tagname;
-                    }
-                    console.log(events);
-                    res.render('auth/mypage3', {
-                    userName: username,
-                    email: req.user.email,
-                    events
-                    });
-                  });
-                });
-              } else {
-                res.render('auth/mypage3', {
-                  userName: username,
-                  email: req.user.email,
-                  events
-                  });
-              }
-            });
-          });
-        } else {
-          res.redirect('/signin');
+          events[i]["tags"] = tagname;
         }
-		} else {
-				res.redirect('/signin');
-		}
-	});
+        eventlist = events;
+      }
+    }
+  }
+
+  async function studentScore1(){
+    if(profession2 == "student"){
+      const studentid = await query('select * from users where profession = "student";');
+      if(studentid.length != 0){
+        searchname = " and (sender_id = " + studentid[0].id.toString();
+        for(var i = 1; i<studentid.length; i++){
+        searchname = searchname + " or sender_id = " + studentid[i].id.toString();
+        }
+        searchname = searchname + ")"
+      }
+      const evaluates_free = await query('select * from evaluates_free;');
+      const free = await query('select * from free;');
+      for(var i = 0; i<free.length; i++){
+        social[i] = {
+          name:free[i].freedom,　
+          count:0
+        }
+      }
+      const student = await query('select * from evaluates where receiver_id = ' + id2.toString() + searchname + ';');
+      if(student.length != 0){
+        for(var i = 0; i<student.length; i++){
+          stotalactionscore = stotalactionscore + student[i].action;
+          stotalthinkscore = stotalthinkscore + student[i].think;
+          stotalteamscore = stotalteamscore + student[i].team;
+          if (evaluates_free.length != 0) {
+            for (var j = 0; j < evaluates_free.length; j++) {
+                for (var k = 0; k < free.length; k++) {
+                    if(student[i].id == evaluates_free[j].evaluate_id){
+                        if (evaluates_free[j].free_id == free[k].id) {
+                            social[k].count++;
+                        }
+                    }
+                }
+            }
+          }
+        }
+          sactionscore = Math.round(stotalactionscore/student.length*10) /10;
+          sthinkscore = Math.round(stotalthinkscore/student.length*10) /10;
+          steamscore = Math.round(stotalteamscore/student.length*10) /10;
+      }
+      ss[0] = {
+        action:sactionscore
+      }
+      ss[1] = {
+        think:sthinkscore
+      }
+      ss[2] = {
+        team:steamscore
+      }
+      social.sort(compare);
+    }
+  }
+
+  async function studentScore2(){
+    if(profession2 == "student"){
+      const teacherid = await query('select * from users where profession = "teacher";');
+      if(teacherid.length != 0){
+        searchname2 = " and (sender_id = " + teacherid[0].id.toString();
+        for(var i = 1; i<teacherid.length; i++){
+        searchname2 = searchname2 + " or sender_id = " + teacherid[i].id.toString();
+        }
+        searchname2 = searchname2 + ")"
+      }
+      const evaluates_free = await query('select * from evaluates_free;');
+      const free = await query('select * from free;');
+      for(var i = 0; i<free.length; i++){
+        social2[i] = {
+          name:free[i].freedom,　
+          count:0
+        }
+      }
+      const teacher = await query('select * from evaluates where receiver_id = ' + id2.toString() + searchname2 + ';');
+      if(teacher.length != 0){
+        for(var i = 0; i<teacher.length; i++){
+          ttotalactionscore = ttotalactionscore + teacher[i].action;
+          ttotalthinkscore = ttotalthinkscore + teacher[i].think;
+          ttotalteamscore = ttotalteamscore + teacher[i].team;
+          if (evaluates_free.length != 0) {
+            for (var j = 0; j < evaluates_free.length; j++) {
+                for (var k = 0; k < free.length; k++) {
+                    if(teacher[i].id == evaluates_free[j].evaluate_id){
+                        if (evaluates_free[j].free_id == free[k].id) {
+                            social2[k].count++;
+                        }
+                    }
+                }
+            }
+          }
+        }
+        tactionscore = Math.round(ttotalactionscore/teacher.length*10) /10;
+        tthinkscore = Math.round(ttotalthinkscore/teacher.length*10) /10;
+        tteamscore = Math.round(ttotalteamscore/teacher.length*10) /10;
+      }
+      ts[0] = {
+        action:tactionscore
+      }
+      ts[1] = {
+        think:tthinkscore
+      }
+      ts[2] = {
+        team:tteamscore
+      }
+      social2.sort(compare);
+    }
+  }
+  
+  async function teacher(){
+	  if(profession2 == "teacher"){
+      const ev = await query("select * from events_teachers where teacher_id = " + id2.toString() + ";");
+      if(ev.length != 0){
+        searchid = ev[0].event_id.toString();
+        if(ev.length > 1){
+          for(var i =1; i<ev.length; i++){
+            searchid = searchid + " or id = " + ev[i].event_id.toString();
+          }
+        }
+      }
+      const events = await query("select * from events where id = " + searchid + ";");
+      if(events.length != 0){
+        const events_tags = await query('select * from events_tags;');
+        const tags = await query('select * from tags;');
+        for(var i = 0; i<events.length; i++){
+          tagid[i] = [];
+          c = 0;
+          var tagname = [];
+          for(var j = 0; j<events_tags.length; j++){
+            if(events[i].id == events_tags[j].event_id){
+              tagid[i][c] = events_tags[j].tags_id;
+              tagname[c] = tags[tagid[i][c]-1].tag;
+              c++;
+            }
+          }
+          events[i]["tags"] = tagname;
+        }
+        eventlist = events;
+      }
+    }
+  }
+
+  async function totalmyAsync(){
+    await getUser();
+    await school();
+    await studentEvent();
+    await studentScore1();
+    await studentScore2();
+    await teacher();
+    console.log(id2);
+    console.log(eventlist);
+    console.log(ss);
+    console.log(social);
+    console.log(ts);
+    console.log(social2);
+  }
+
+  totalmyAsync();
 });
 
 function compare( a, b ){

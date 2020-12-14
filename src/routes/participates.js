@@ -1,59 +1,55 @@
 var express = require('express');
 var router = express.Router();
-let mysql = require('mysql2');
+const mysql = require('mysql');
+const util = require('util');
 let connection = mysql.createConnection({
   host: 'mysql',
   user: 'root',
   password: 'secret',
   database: 'portfoliopj'
 });
-
+const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
-  var searchname;
-  var today = getStringFromDate(new Date());
-  var startday;
-  var lastday;
-  var today2;
-  var startday2;
-  var lastday2;
-  var branch;
-  connection.query('select * from events where id = ' + req.body.event_id + ';', function(err, events){
-    connection.query('select * from events_students where event_id = ' + events[0].id + ';', function(err, events_students){
-      startday = getStringFromDate(events[0].start_day);
-      lastday = getStringFromDate3(events[0].last_day);
-      today2 = new Date(today);
-      startday2 = new Date(startday);
-      lastday2 = new Date(lastday);
-      console.log(startday2 + "スタート");
-      console.log(lastday2 + "ラスト");
-      console.log(today2 + "今");
-      if(events_students.length != 0){
-        searchname = events_students[0].student_id;
-        if(events_students.length > 1){
-          for(var i = 1; i<events_students.length; i++){
-            searchname = searchname + " or id = " + events_students[i].student_id;
-          }
+  let searchname;
+  let today = getStringFromDate(new Date());
+  let startday;
+  let lastday;
+  let today2;
+  let startday2;
+  let lastday2;
+  let branch;
+  let students;
+  async function evaluate() {
+    const events = await query('select * from events where id = ' + req.body.event_id + ';');
+    const events_students = await query('select * from events_students where event_id = ' + events[0].id + ';');
+    startday = getStringFromDate(events[0].start_day);
+    lastday = getStringFromDate3(events[0].last_day);
+    today2 = new Date(today);
+    startday2 = new Date(startday);
+    lastday2 = new Date(lastday);
+    if(events_students.length != 0){
+      searchname = events_students[0].student_id;
+      if(events_students.length > 1){
+        for(var i = 1; i<events_students.length; i++){
+          searchname = searchname + " or id = " + events_students[i].student_id;
         }
-      } else {
-        serachname = "20 and id = 30";
       }
-      console.log(startday2<=today2);
-      console.log(today2<=lastday2);
-      connection.query('select * from users where id = ' + searchname + ';', function(err, users){
-        if (startday2<=today2 && today2<=lastday2){
-          branch = 0;
-          console.log(users);
-          console.log(branch);
-          console.log("評価できるよ！");
-        } else {
-          console.log(users);
-          branch = 1;
-          console.log(branch);
-          console.log("評価できないよ！")
-        }
-      });
-    });
-  });
+    } else {
+      serachname = "20 and id = 30";
+    }
+    const users = await query('select * from users where id = ' + searchname + ';');
+    if (startday2<=today2 && today2<=lastday2){
+      branch = 0;
+      console.log("評価できるよ！");
+    } else {
+      branch = 1;
+      console.log("評価できないよ！")
+    }
+    students = events_students;
+    console.log(students);
+    console.log(branch);
+  }
+  evaluate();
 });
 function getStringFromDate(date) {
 

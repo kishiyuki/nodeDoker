@@ -20,11 +20,13 @@
     "isomorphic-fetch": "^2.2.1",
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
+    "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
     "node-fetch": "^2.1.2",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
-    "pug": "2.0.0-beta11"
+    "pug": "2.0.0-beta11",
+    "util": "^0.12.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"

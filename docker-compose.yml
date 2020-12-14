@@ -50,7 +50,7 @@ services:
 
 networks:
   backend:
-    external: true
+   # external: true
 
 volumes:
   mysqldata:
