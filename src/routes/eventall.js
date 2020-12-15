@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-let mysql = require('mysql');
+let mysql = require('mysql2');
 const util = require('util');
 let connection = mysql.createConnection({
   host: 'mysql',
@@ -50,17 +50,20 @@ router.get('/', function(req, res, next){
   // }
 });
 
-router.get('/:tags', function(req, res, next){
+router.get('/t', function(req, res, next){
   let obj;
   let tagid = [];
   let c;
   let eventlist;
   let count = 1;
   let name;
+  let result = req.query.tags.split(',');
+
+  console.log(result);
   async function tag(){
-    name = "'" + req.params.tags[0] + "'";
-    for(var j = 1; j<req.params.tags.length; j++){
-      name = name + ", '" + req.params.tags[j] + "'";
+    name = "'" + result[0] + "'";
+    for(var j = 1; j<result.length; j++){
+      name = name + ", '" + result[j] + "'";
       count++;
     }
     const events = await query("SELECT * from events e WHERE " + count + " = (SELECT COUNT(*) from events_tags INNER JOIN tags ON events_tags.tags_id = tags.id WHERE e.id = events_tags.event_id AND tags.tag IN (" + name + "));");
@@ -95,13 +98,14 @@ router.get('/:tags', function(req, res, next){
   // }
 });
 
-router.get('/:startday/:lastday', function(req, res, next){
+router.get('/d', function(req, res, next){
   let obj;
   let tagid = [];
   let c;
   let eventlist;
-  async function day(){
-    const events = await query('SELECT * FROM events WHERE start_day BETWEEN "' + req.params.startday.toString() + '" AND "' + req.params.lastday.toString() + '";');
+  let today = getStringFromDate(new Date());
+  async function day1(){
+    const events = await query('SELECT * FROM events WHERE start_day BETWEEN "' + req.query.startday.toString() + '" AND "' + req.query.lastday.toString() + '";');
     const events_tags = await query('select * from events_tags;');
     const tags = await query('select * from tags;');
     if(events.length != 0){
@@ -126,20 +130,8 @@ router.get('/:startday/:lastday', function(req, res, next){
     }
     res.json(obj);
   }
-  // if(req.user){
-    day();
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
-});
-
-router.get('/:startday', function(req, res, next){
-  let obj;
-  let tagid = [];
-  let c;
-  let eventlist;
-  async function day(){
-    const events = await query('SELECT * FROM events WHERE start_day >"' + req.params.startday + '";');
+  async function day2(){
+    const events = await query('SELECT * FROM events WHERE start_day >"' + req.query.startday + '";');
     const events_tags = await query('select * from events_tags;');
     const tags = await query('select * from tags;');
     if(events.length != 0){
@@ -164,21 +156,8 @@ router.get('/:startday', function(req, res, next){
     }
     res.json(obj);
   }
-  // if(req.user){
-    day();
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
-});
-
-router.get('/:lastday', function(req, res, next){
-  let obj;
-  let tagid = [];
-  let c;
-  let eventlist;
-  let today = getStringFromDate(new Date());
-  async function day(){
-    const events = await query('SELECT * FROM events WHERE start_day BETWEEN "' + today + '" AND "' + req.params.lastday.toString() + '";');
+  async function day3(){
+    const events = await query('SELECT * FROM events WHERE start_day BETWEEN "' + today + '" AND "' + req.query.lastday.toString() + '";');
     const events_tags = await query('select * from events_tags;');
     const tags = await query('select * from tags;');
     if(events.length != 0){
@@ -204,21 +183,28 @@ router.get('/:lastday', function(req, res, next){
     res.json(obj);
   }
   // if(req.user){
-    day();
+    if(req.query.lastday && req.query.startday){
+      day1();
+    } else if(req.query.startday && !req.query.lastday){
+      day2();
+    } else if(!req.query.startday && req.query.lastday){
+      day3();
+    } else {
+      // res.redirect("auth/eventall")
+    }
   // } else {
   //     res.redirect("auth/signin")
   // }
 });
 
-
-
-router.get('/:search', function(req, res, next){
+router.get('/s', function(req, res, next){
   let obj;
   let tagid = [];
   let c;
   let eventlist;
+  console.log("ああああああああああいいいいいいいいいいい"+ req.query.search);
   async function search(){
-    const events = await query("select * from events where event_name like '" + req.params.search +"%';");
+    const events = await query("select * from events where event_name like '" + req.query.search +"%';");
     const events_tags = await query('select * from events_tags;');
     const tags = await query('select * from tags;');
     if(events.length != 0){

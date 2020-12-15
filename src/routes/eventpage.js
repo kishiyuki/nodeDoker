@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const util = require('util');
 let connection = mysql.createConnection({
   host: 'mysql',
@@ -34,9 +34,9 @@ router.get('/', function(req, res, next){
     //     }
     //   }
     // }
-    if (req.body.email) {
+    if (req.query.email) {
       for (i = 0; i < users.length; i++) {
-        if(req.body.email == users[i].email){
+        if(req.query.email == users[i].email){
           id2 = users[i].id;
           profession2 = users[i].profession;
         }
@@ -44,7 +44,7 @@ router.get('/', function(req, res, next){
     }
   }
   async function addTag() {
-    const events = await query('select * from events where id = ' + req.body.event_id + ';');
+    const events = await query('select * from events where id = ' + req.query.event_id + ';');
     if(events.length != 0){
       const events_tags = await query('select * from events_tags;');
       const tags = await query('select * from tags;');
@@ -63,8 +63,8 @@ router.get('/', function(req, res, next){
   }
       
   async function addTeacher() {
-    const events = await query('select * from events where id = ' + req.body.event_id + ';');
-    const events_teachers = await query('select * from events_teachers where event_id = ' + req.body.event_id + ';');
+    const events = await query('select * from events where id = ' + req.query.event_id + ';');
+    const events_teachers = await query('select * from events_teachers where event_id = ' + req.query.event_id + ';');
     if(events_teachers.length != 0){
       searchname = events_teachers[0].teacher_id.toString();
       if(events_teachers.length > 1){
@@ -83,12 +83,12 @@ router.get('/', function(req, res, next){
   }
 
   async function part() {
-    const events = await query('select * from events where id = ' + req.body.event_id + ';');
+    const events = await query('select * from events where id = ' + req.query.event_id + ';');
     lastday = getStringFromDate3(events[0].last_day);
     lastday2 = new Date(lastday);
     deadline = new Date(events[0].deadline);
     if(profession2 == "student"){
-      const events_students = await query("select * from events_students where event_id = " + req.body.event_id + " and student_id =" + id2.toString() + ";");
+      const events_students = await query("select * from events_students where event_id = " + req.query.event_id + " and student_id =" + id2.toString() + ";");
       if(events_students.length == 0){
         if(deadline >= today2){
           branch = 0;
@@ -107,7 +107,7 @@ router.get('/', function(req, res, next){
         }
       }
     } else if (profession2 == "teacher"){
-      const events_teachers = await query("select * from events_teachers where event_id = " + req.body.event_id + " and teacher_id =" + id2.toString() + ";");
+      const events_teachers = await query("select * from events_teachers where event_id = " + req.query.event_id + " and teacher_id =" + id2.toString() + ";");
       if(events_teachers2.length == 0){
         branch = 1;
         console.log("参加してないから見れないよ");

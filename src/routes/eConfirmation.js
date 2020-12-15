@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const util = require('util');
 const IOST = require('@kunroku/iost')
 const crypto = require('crypto');
@@ -69,12 +69,12 @@ router.get('/', function (req, res, next) {
     //   }
     // }
     // if(profession == "student"){
-    //   const events_students_con = await query('select * from events_students where event_id = ' + req.body.event_id + ' and student_id = ' + id +';');
+    //   const events_students_con = await query('select * from events_students where event_id = ' + req.query.event_id + ' and student_id = ' + id +';');
     //   if(events_students_con != 0){
     //     bool = true;
     //   }
     // } else if (profession == "teacher"){
-    //   const events_teachers_con = await query('select * from events_teachers where event_id = ' + req.body.event_id + ' and teacher_id = ' + id +';');
+    //   const events_teachers_con = await query('select * from events_teachers where event_id = ' + req.query.event_id + ' and teacher_id = ' + id +';');
     //   if(events_teachers_con != 0){
     //     bool = true;
     //   }
@@ -88,16 +88,16 @@ router.get('/', function (req, res, next) {
         //         }
         //     }
         // }
-        if (req.body.email) {
+        if (req.query.email) {
             for (i = 0; i < users.length; i++) {
-                if (req.body.email == users[i].email) {
+                if (req.query.email == users[i].email) {
                     id2 = users[i].id;
                 }
             }
         }
     }
     async function addTag() {
-        const events = await query('select * from events where id = ' + req.body.event_id + ';');
+        const events = await query('select * from events where id = ' + req.query.event_id + ';');
         if (events.length != 0) {
             const events_tags = await query('select * from events_tags;');
             const tags = await query('select * from tags;');
@@ -115,7 +115,7 @@ router.get('/', function (req, res, next) {
         }
     }
     async function addTeacher() {
-        const events_teachers = await query('select * from events_teachers where event_id = ' + req.body.event_id + ';');
+        const events_teachers = await query('select * from events_teachers where event_id = ' + req.query.event_id + ';');
         searchname3 = events_teachers[0].teacher_id.toString();
         if (events_teachers.length > 1) {
             for (var i = 1; i < events_teachers.length; i++) {
@@ -139,7 +139,7 @@ router.get('/', function (req, res, next) {
             }
             searchname = searchname + ")"
         }
-        const student = await query('select * from evaluates where receiver_id = ' + id2.toString() + " and event_id = " + req.body.event_id + searchname + ';');
+        const student = await query('select * from evaluates where receiver_id = ' + id2.toString() + " and event_id = " + req.query.event_id + searchname + ';');
         freeid = [];
         evaluates_free = await query('select * from evaluates_free;');
         free = await query('select * from free;');
@@ -190,7 +190,7 @@ router.get('/', function (req, res, next) {
             }
             searchname2 = searchname2 + ")"
         }
-        const teacher = await query('select * from evaluates where receiver_id = ' + id2.toString() + " and event_id = " + req.body.event_id + searchname2 + ';');
+        const teacher = await query('select * from evaluates where receiver_id = ' + id2.toString() + " and event_id = " + req.query.event_id + searchname2 + ';');
         freeid = [];
         evaluates_free = await query('select * from evaluates_free;');
         free = await query('select * from free;');

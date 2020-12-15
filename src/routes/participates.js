@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const util = require('util');
 let connection = mysql.createConnection({
   host: 'mysql',
@@ -47,7 +47,7 @@ router.get('/', function(req, res, next){
     //   bool = true;
     // }
     // if(bool){
-    const events = await query('select * from events where id = ' + req.body.event_id + ';');
+    const events = await query('select * from events where id = ' + req.query.event_id + ';');
     const events_students = await query('select * from events_students where event_id = ' + events[0].id + ';');
     startday = getStringFromDate(events[0].start_day);
     lastday = getStringFromDate3(events[0].last_day);

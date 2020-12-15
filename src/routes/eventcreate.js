@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-let mysql = require('mysql');
+let mysql = require('mysql2');
 const util = require('util');
 const { body, validationResult } = require('express-validator');
 const { create } = require('domain');

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-let mysql = require('mysql');
+let mysql = require('mysql2');
 const util = require('util');
 const { body, validationResult } = require('express-validator');
 const IOST = require('@kunroku/iost')
@@ -43,12 +43,12 @@ router.get('/', function(req, res, next){
     //   }
     // }
     // if(profession == "student"){
-    //   const events_students_con = await query('select * from events_students where event_id = ' + req.body.event_id + ' and student_id = ' + id +';');
+    //   const events_students_con = await query('select * from events_students where event_id = ' + req.query.event_id + ' and student_id = ' + id +';');
     //   if(events_students_con != 0){
     //     bool = true;
     //   }
     // } else if (profession == "teacher"){
-    //   const events_teachers_con = await query('select * from events_teachers where event_id = ' + req.body.event_id + ' and teacher_id = ' + id +';');
+    //   const events_teachers_con = await query('select * from events_teachers where event_id = ' + req.query.event_id + ' and teacher_id = ' + id +';');
     //   if(events_teachers_con != 0){
     //     bool = true;
     //   }
@@ -56,7 +56,7 @@ router.get('/', function(req, res, next){
     //   bool = true;
     // }
     // if(bool){
-    const events = await query('select * from events where id = ' + req.body.event_id + ';');
+    const events = await query('select * from events where id = ' + req.query.event_id + ';');
     if(users.length != 0){
       for (i = 0; i < users.length; i++) {
         // if(req.user.email == users[i].email){
@@ -65,10 +65,10 @@ router.get('/', function(req, res, next){
         // if(req.user.receiver_id == users[i].id){
         //   receiver = users[i];
         // }
-        if(req.body.email == users[i].email){
+        if(req.query.email == users[i].email){
           sender = users[i];
         }
-        if(req.body.receiver_id == users[i].id){
+        if(req.query.receiver_id == users[i].id){
           receiver = users[i];
         }
       }

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const util = require('util');
 let connection = mysql.createConnection({
   host: 'mysql',
