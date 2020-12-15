@@ -11,6 +11,10 @@ let connection = mysql.createConnection({
 const query = util.promisify(connection.query).bind(connection);
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  let obj;
+  let username = "";
+	let profession2 = "";
+  let id2 = 0;
   let eventlist;
   let tagid = [];
   let c;
@@ -36,27 +40,23 @@ router.get('/', function(req, res, next) {
   
   async function getUser(){
     const users = await query('select * from users;');
-		if (req.user) {
-			let username = "";
-			let profession2 = "";
-      let id2 = 0;
-			for (i = 0; i < users.length; i++) {
-				if(req.user.email == users[i].email){
-          id2 = users[i].id;
-	        username = users[i].user_name;
-					profession2 = users[i].profession;
-	      }
+    for (i = 0; i < users.length; i++) {
+      // if(req.user.email == users[i].email){
+      //   id2 = users[i].id;
+      //   username = users[i].user_name;
+      //   profession2 = users[i].profession;
+      // }
+      if(req.body.email == users[i].email){
+        id2 = users[i].id;
+        username = users[i].user_name;
+        profession2 = users[i].profession;
       }
     }
   }
 
   async function school(){
     if(profession2 == "school"){
-      const events = await query('select * from events;');
-        // res.render('auth/mypage1', {
-        //   userName: username,
-        //   email: req.user.email
-        // });
+    //   res.redirecct('auth/eventall');
     }
   }
 
@@ -196,6 +196,15 @@ router.get('/', function(req, res, next) {
         team:tteamscore
       }
       social2.sort(compare);
+      obj = {
+        eventlist:eventlist,
+        username:username,
+        ss:ss,
+        social:social,
+        ts:ts,
+        social2:social2
+      }
+      res.json(obj);
     }
   }
   
@@ -229,25 +238,27 @@ router.get('/', function(req, res, next) {
         }
         eventlist = events;
       }
+      obj = {
+        eventlist:eventlist,
+        username:username
+      }
+      res.json(obj);
     }
   }
 
-  async function totalmyAsync(){
+  async function total(){
     await getUser();
     await school();
     await studentEvent();
     await studentScore1();
     await studentScore2();
     await teacher();
-    console.log(id2);
-    console.log(eventlist);
-    console.log(ss);
-    console.log(social);
-    console.log(ts);
-    console.log(social2);
   }
-
-  totalmyAsync();
+  // if(req.user){
+    total();
+  // } else {
+  //     res.redirect("auth/signin")
+  // }
 });
 
 function compare( a, b ){

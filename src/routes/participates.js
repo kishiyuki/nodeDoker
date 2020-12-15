@@ -10,6 +10,10 @@ let connection = mysql.createConnection({
 });
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
+  let obj;
+  let id;
+  let profession;
+  let bool = false;
   let searchname;
   let today = getStringFromDate(new Date());
   let startday;
@@ -20,6 +24,29 @@ router.get('/', function(req, res, next){
   let branch;
   let students;
   async function evaluate() {
+    // const users = await query('select * from users;');
+    // if (req.user.email) {
+    //   for (i = 0; i < users.length; i++) {
+    //     if(req.user.email == users[i].email){
+    //       id = users[i].id;
+    //       profession = users[i].profession;
+    //     }
+    //   }
+    // }
+    // if(profession == "student"){
+    //   const events_students_con = await query('select * from events_students where event_id = ' + events[0].id + ' and student_id = ' + id +';');
+    //   if(events_students_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "teacher"){
+    //   const events_teachers_con = await query('select * from events_teachers where event_id = ' + events[0].id + ' and teacher_id = ' + id +';');
+    //   if(events_teachers_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "school"){
+    //   bool = true;
+    // }
+    // if(bool){
     const events = await query('select * from events where id = ' + req.body.event_id + ';');
     const events_students = await query('select * from events_students where event_id = ' + events[0].id + ';');
     startday = getStringFromDate(events[0].start_day);
@@ -45,11 +72,19 @@ router.get('/', function(req, res, next){
       branch = 1;
       console.log("評価できないよ！")
     }
-    students = events_students;
-    console.log(students);
-    console.log(branch);
+    students = users;
+    obj = {
+      students:students,
+      branch:branch
+    }
+    res.json(obj);
+  // }
   }
-  evaluate();
+  // if(req.user){
+    evaluate();
+  // } else {
+  //     res.redirect("auth/signin")
+  // }
 });
 function getStringFromDate(date) {
 

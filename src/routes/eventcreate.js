@@ -3,6 +3,7 @@ var router = express.Router();
 let mysql = require('mysql');
 const util = require('util');
 const { body, validationResult } = require('express-validator');
+const { create } = require('domain');
 let connection = mysql.createConnection({
   host: 'mysql',
   user: 'root',
@@ -11,18 +12,36 @@ let connection = mysql.createConnection({
 });
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
+  let obj;
   let teachers;
   let tags;
+  let profession;
   async function crate(){
+    // const users = await query('select * from users;');
+    // if (req.user.email) {
+    //   for (i = 0; i < users.length; i++) {
+    //     if(req.user.email == users[i].email){
+    //       profession = users[i].profession;
+    //     }
+    //   }
+    // }
+    // if(profession == "school"){
     const teacher = await query('select * user_name from users where profession = "teacher";');
     const tag = await query('select * from tags;');
     teachers = teacher;
     tags = tag;
-    // res.render('auth/eventcreate', {teachers,tags});
-    console.log(teachers);
-    console.log(tags);
+    obj = {
+      teachers:teachers,
+      tags:tags
+    }
+    res.json(obj);
+  // }
   }
-  create();
+  // if(req.user){
+    create();
+  // } else {
+  //     res.redirect("auth/signin")
+  // }
 });
 router.post('/', [body("event_name").not().isEmpty().withMessage("イベント名を入力してください。").isLength({min:0,max:30000}).withMessage("イベント名が長過ぎます。"),
                   body("start_day").isISO8601().withMessage("開催日を入力してください。").isAfter(getStringFromDate(new Date())).withMessage("開催日が過ぎています。"),
@@ -38,6 +57,15 @@ router.post('/', [body("event_name").not().isEmpty().withMessage("イベント�
   }
   let now = getStringFromDate(new Date());
   async function add(){
+    // const users = await query('select * from users;');
+    // if (req.user.email) {
+    //   for (i = 0; i < users.length; i++) {
+    //     if(req.user.email == users[i].email){
+    //       profession = users[i].profession;
+    //     }
+    //   }
+    // }
+    // if(profession == "school"){
     connection.query('insert into events set ? ;', {
       event_name: req.body.event_name,
       start_day: req.body.start_day,
@@ -77,12 +105,17 @@ router.post('/', [body("event_name").not().isEmpty().withMessage("イベント�
         // res.redirect('/eventcreate');
       }
     });
+  // }
   }
+  // if(req.user){
   if (!errors.isEmpty()) {
     create();
   }　else {
     add();
   }
+  // } else {
+  //     res.redirect("auth/signin")
+  // }
 });
 
 function getStringFromDate(date) {

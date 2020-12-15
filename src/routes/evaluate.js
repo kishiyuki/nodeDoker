@@ -26,14 +26,45 @@ let connection = mysql.createConnection({
 });
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
+  let profession;
+  let bool;
+  let obj;
   let sender;
   let receiver;
   let eventlist;
   async function getESR(){
     const users = await query('select * from users;');
+    // if (req.user.email) {
+    //   for (i = 0; i < users.length; i++) {
+    //     if(req.user.email == users[i].email){
+    //       id = users[i].id;
+    //       profession = users[i].profession;
+    //     }
+    //   }
+    // }
+    // if(profession == "student"){
+    //   const events_students_con = await query('select * from events_students where event_id = ' + req.body.event_id + ' and student_id = ' + id +';');
+    //   if(events_students_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "teacher"){
+    //   const events_teachers_con = await query('select * from events_teachers where event_id = ' + req.body.event_id + ' and teacher_id = ' + id +';');
+    //   if(events_teachers_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "school"){
+    //   bool = true;
+    // }
+    // if(bool){
     const events = await query('select * from events where id = ' + req.body.event_id + ';');
     if(users.length != 0){
       for (i = 0; i < users.length; i++) {
+        // if(req.user.email == users[i].email){
+        //   sender = users[i];
+        // }
+        // if(req.user.receiver_id == users[i].id){
+        //   receiver = users[i];
+        // }
         if(req.body.email == users[i].email){
           sender = users[i];
         }
@@ -43,11 +74,20 @@ router.get('/', function(req, res, next){
       }
     }
     eventlist = events;
-    console.log(sender);
-    console.log(receiver);
-    console.log(eventlist);
+    obj = {
+      eventlist:eventlist,
+      sender:sender,
+      receiver:receiver
+    }
+    res.json(obj);
+  // }
   }
-  getESR();
+
+  // if(req.user){
+    getESR();
+    // } else {
+    //     res.redirect("auth/signin")
+    // }
 });
 
 router.post('/', [body("action").not().isEmpty().withMessage("アクションを入力してください。").isNumeric().withMessage("アクションに数字を入力してください。"),
@@ -55,14 +95,45 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
                   body("team").not().isEmpty().withMessage("チームを入力してください。").isNumeric().withMessage("チームに数字を入力してください。")
                 　],(req, res, next) =>{
   const errors = validationResult(req);
+  let profession;
+  let bool;
+  let obj;
   let sender;
   let receiver;
   let eventlist;
   async function getESR(){
     const users = await query('select * from users;');
     const events = await query('select * from events where id = ' + req.body.event_id + ';');
+    // if (req.user.email) {
+    //   for (i = 0; i < users.length; i++) {
+    //     if(req.user.email == users[i].email){
+    //       id = users[i].id;
+    //       profession = users[i].profession;
+    //     }
+    //   }
+    // }
+    // if(profession == "student"){
+    //   const events_students_con = await query('select * from events_students where event_id = ' + req.body.event_id + ' and student_id = ' + id +';');
+    //   if(events_students_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "teacher"){
+    //   const events_teachers_con = await query('select * from events_teachers where event_id = ' + req.body.event_id + ' and teacher_id = ' + id +';');
+    //   if(events_teachers_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "school"){
+    //   bool = true;
+    // }
+    // if(bool){
     if(users.length != 0){
       for (i = 0; i < users.length; i++) {
+        // if(req.user.email == users[i].email){
+        //   sender = users[i];
+        // }
+        // if(req.user.receiver_id == users[i].id){
+        //   receiver = users[i];
+        // }
         if(req.body.email == users[i].email){
           sender = users[i];
         }
@@ -72,14 +143,45 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       }
     }
     eventlist = events;
-    console.log(sender);
-    console.log(receiver);
-    console.log(eventlist);
+    obj = {
+      eventlist:eventlist,
+      sender:sender,
+      receiver:receiver
+    }
+    res.json(obj);
+  // }
   }
   async function getSR(){
     const users = await query('select * from users;');
+    // if (req.user.email) {
+    //   for (i = 0; i < users.length; i++) {
+    //     if(req.user.email == users[i].email){
+    //       id = users[i].id;
+    //       profession = users[i].profession;
+    //     }
+    //   }
+    // }
+    // if(profession == "student"){
+    //   const events_students_con = await query('select * from events_students where event_id = ' + req.body.event_id + ' and student_id = ' + id +';');
+    //   if(events_students_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "teacher"){
+    //   const events_teachers_con = await query('select * from events_teachers where event_id = ' + req.body.event_id + ' and teacher_id = ' + id +';');
+    //   if(events_teachers_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "school"){
+    //   bool = true;
+    // }
     if(users.length != 0){
       for (i = 0; i < users.length; i++) {
+        // if(req.user.email == users[i].email){
+        //   sender = users[i];
+        // }
+        // if(req.user.receiver_id == users[i].id){
+        //   receiver = users[i];
+        // }
         if(req.body.email == users[i].email){
           sender = users[i];
         }
@@ -93,6 +195,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
   let dtx;
   let handler;
   async function destroy(){
+    // if(bool){
     address = req.body.event_id.toString() + "_" + sender.id.toString() + "_" + req.body.receiver_id.toString();
     const evaluates = await query('select * from evaluates where event_id = ' + req.body.event_id.toString() + ' and sender_id = ' + sender.id.toString() + ' and receiver_id = ' + req.body.receiver_id.toString() + ';');
     if(evaluates.length != 0){
@@ -116,6 +219,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
         }
       });
     }
+  // }
   }
   let now = getStringFromDate(new Date());
   let freeStatement = "";
@@ -123,6 +227,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
   let hash;
   let atx;
   async function add(){
+    // if(bool){
     if(req.body.free != null){
       for(var i = 0; i<req.body.free.length; i++){
         freeStatement = freeStatement + req.body.free[i].toString();
@@ -171,17 +276,22 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
         console.log(err);
       }
     });
+  // }
   }
   async function total(){
     await getSR();
     await destroy();
     await add();
   }
-  if (!errors.isEmpty()) {
-    getESR();
-  }else {
-    total();
-  }
+  // if(req.user){
+    if (!errors.isEmpty()) {
+      getESR();
+    }else {
+      total();
+    }
+  // } else {
+  //     res.redirect("auth/signin")
+  // }
 });
 
 function getStringFromDate(date) {

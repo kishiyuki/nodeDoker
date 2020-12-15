@@ -26,12 +26,14 @@ let connection = mysql.createConnection({
 });
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function (req, res, next) {
-    let gettx = "aaaaaaaaaa";
+    let profession;
+    let obj;
     let id2;
     let eventlist;
     let evaluates_free;
     let free;
-    let comments = [];
+    let scomments = [];
+    let tcomments = [];
     let searchname = " and sender_id = 99999";
     let searchname2 = " and sender_id = 99999";
     let searchname3 = "20 and id = 30";
@@ -58,6 +60,34 @@ router.get('/', function (req, res, next) {
 
     async function getId() {
         const users = await query('select * from users;');
+        // if (req.user.email) {
+    //   for (i = 0; i < users.length; i++) {
+    //     if(req.user.email == users[i].email){
+    //       id = users[i].id;
+    //       profession = users[i].profession;
+    //     }
+    //   }
+    // }
+    // if(profession == "student"){
+    //   const events_students_con = await query('select * from events_students where event_id = ' + req.body.event_id + ' and student_id = ' + id +';');
+    //   if(events_students_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "teacher"){
+    //   const events_teachers_con = await query('select * from events_teachers where event_id = ' + req.body.event_id + ' and teacher_id = ' + id +';');
+    //   if(events_teachers_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "school"){
+    //   bool = false;
+    // }
+        // if (req.user.email) {
+        //     for (i = 0; i < users.length; i++) {
+        //         if (req.user.email == users[i].email) {
+        //             id2 = users[i].id;
+        //         }
+        //     }
+        // }
         if (req.body.email) {
             for (i = 0; i < users.length; i++) {
                 if (req.body.email == users[i].email) {
@@ -124,7 +154,7 @@ router.get('/', function (req, res, next) {
                 stotalactionscore = stotalactionscore + student[i].action;
                 stotalthinkscore = stotalthinkscore + student[i].think;
                 stotalteamscore = stotalteamscore + student[i].team;
-                comments[i] = student[i].comments;
+                scomments[i] = student[i].comments;
                 if (evaluates_free.length != 0) {
                     for (var j = 0; j < evaluates_free.length; j++) {
                         for (var k = 0; k < free.length; k++) {
@@ -175,7 +205,7 @@ router.get('/', function (req, res, next) {
                 ttotalactionscore = ttotalactionscore + teacher[i].action;
                 ttotalthinkscore = ttotalthinkscore + teacher[i].think;
                 ttotalteamscore = ttotalteamscore + teacher[i].team;
-                comments[i] = teacher[i].comments;
+                tcomments[i] = teacher[i].comments;
                 if (evaluates_free.length != 0) {
                     for (var j = 0; j < evaluates_free.length; j++) {
                         for (var k = 0; k < free.length; k++) {
@@ -211,25 +241,40 @@ router.get('/', function (req, res, next) {
         await teacherScore();
         await social.sort(compare);
         await social2.sort(compare);
-        console.log(id2);
-        console.log(eventlist);
-        console.log(ss);
-        console.log(social);
-        console.log(ts);
-        console.log(social2);
+        obj = {
+            eventlist: eventlist,
+            ss: ss,
+            social:social,
+            scomments:scomments,
+            ts:ts,
+            social2:social2,
+            tcomments:tcomments
+        };
+        res.json(obj);
     }
+    // if(req.user){
+        // if(bool){
     total();
+        // } else {
+            // res.redirect("auth/mypage")
+        // }
+    // } else {
+    //     res.redirect("auth/signin")
+    // }
 });
 
 
 router.post('/', function (req, res, next) {
+    let obj;
+    let profession;
     let id2;
     let hash;
     let eventlist;
     let evaluates_free;
     let free;
     let freeid = [];
-    let comments = [];
+    let tcomments = [];
+    let scomments = [];
     let freenum = [];
     let freeStatement;
     let evaluationStatement;
@@ -259,6 +304,34 @@ router.post('/', function (req, res, next) {
     const social2 = Array.from({ length: 12 }, () => 0);
     async function getId() {
         const users = await query('select * from users;');
+        // if (req.user.email) {
+    //   for (i = 0; i < users.length; i++) {
+    //     if(req.user.email == users[i].email){
+    //       id = users[i].id;
+    //       profession = users[i].profession;
+    //     }
+    //   }
+    // }
+    // if(profession == "student"){
+    //   const events_students_con = await query('select * from events_students where event_id = ' + req.body.event_id + ' and student_id = ' + id +';');
+    //   if(events_students_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "teacher"){
+    //   const events_teachers_con = await query('select * from events_teachers where event_id = ' + req.body.event_id + ' and teacher_id = ' + id +';');
+    //   if(events_teachers_con != 0){
+    //     bool = true;
+    //   }
+    // } else if (profession == "school"){
+    //   bool = false;
+    // }
+        // if (req.user.email) {
+        //     for (i = 0; i < users.length; i++) {
+        //         if (req.user.email == users[i].email) {
+        //             id2 = users[i].id;
+        //         }
+        //     }
+        // }
         if (req.body.email) {
             for (i = 0; i < users.length; i++) {
                 if (req.body.email == users[i].email) {
@@ -351,7 +424,7 @@ router.post('/', function (req, res, next) {
                             stotalactionscore = stotalactionscore + student[i].action;
                             stotalthinkscore = stotalthinkscore + student[i].think;
                             stotalteamscore = stotalteamscore + student[i].team;
-                            comments[i] = student[i].comments;
+                            scomments[i] = student[i].comments;
                             if (freenum.length != 0) {
                                 for (var j = 0; j < freenum.length; j++) {
                                     for (var k = 0; k < free.length; k++) {
@@ -432,7 +505,7 @@ router.post('/', function (req, res, next) {
                             ttotalactionscore = ttotalactionscore + teacher[i].action;
                             ttotalthinkscore = ttotalthinkscore + teacher[i].think;
                             ttotalteamscore = ttotalteamscore + teacher[i].team;
-                            comments[i] = teacher[i].comments;
+                            tcomments[i] = teacher[i].comments;
                             if (freenum.length != 0) {
                                 for (var j = 0; j < freenum.length; j++) {
                                     for (var k = 0; k < free.length; k++) {
@@ -470,14 +543,26 @@ router.post('/', function (req, res, next) {
         await teacherScore();
         await social.sort(compare);
         await social2.sort(compare);
-        console.log(id2);
-        console.log(eventlist);
-        console.log(ss);
-        console.log(social);
-        console.log(ts);
-        console.log(social2);
+        obj = {
+            eventlist: eventlist,
+            ss: ss,
+            social:social,
+            scomments:scomments,
+            ts:ts,
+            social2:social2,
+            tcomments:tcomments
+        };
+        res.json(obj);
     }
-    total();
+    // if(req.user){
+        // if(bool){
+            total();
+            // } else {
+                // res.redirect("auth/mypage")
+            // }
+        // } else {
+        //     res.redirect("auth/signin")
+        // }
 });
 
 async function getHistory(address, id, attr) {

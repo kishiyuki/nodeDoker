@@ -10,6 +10,7 @@ let connection = mysql.createConnection({
 });
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
+  let obj;
   let profession2 = "";
   let id2;
   var tagid = [];
@@ -25,9 +26,17 @@ router.get('/', function(req, res, next){
   var lastday2;
   async function getUser() {
     const users = await query('select * from users;');
-    if (req.user.email) {
+    // if (req.user.email) {
+    //   for (i = 0; i < users.length; i++) {
+    //     if(req.user.email == users[i].email){
+    //       id2 = users[i].id;
+    //       profession2 = users[i].profession;
+    //     }
+    //   }
+    // }
+    if (req.body.email) {
       for (i = 0; i < users.length; i++) {
-        if(req.user.email == users[i].email){
+        if(req.body.email == users[i].email){
           id2 = users[i].id;
           profession2 = users[i].profession;
         }
@@ -106,17 +115,27 @@ router.get('/', function(req, res, next){
         branch = 2;
         console.log("参加者リスト");
       }
+    } else if(profession2 = "school"){
+      branch = 2;
+      console.log("参加者リスト");
     }
   }
-  async function totalmyAsync() {
+  async function total() {
     await getUser();
     await addTag();
     await addTeacher();
     await part();
-    console.log(eventlist);
-    console.log(branch);
+    obj = {
+      eventlist:eventlist,
+      branch:branch
+    }
+    res.json(obj);
   }
-  totalmyAsync();
+  // if(req.user){
+    total();
+  // } else {
+  //     res.redirect("auth/signin")
+  // }
 });
 
 router.post('/', function(req, res, next){
@@ -144,7 +163,11 @@ router.post('/', function(req, res, next){
       }
     }
   }
-  participate();
+  // if(req.user){
+    participate();
+  // } else {
+  //     res.redirect("auth/signin")
+  // }
 });
 function getStringFromDate(date) {
 
