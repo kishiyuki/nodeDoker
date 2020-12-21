@@ -165,7 +165,7 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log(errors);
-      // res.redirect('/signup');
+      res.redirect('http://localhost/signup');
     }else {
       connection.query('select * from users;', function(err, users){
         connection.query('insert into users set ? ;', {
@@ -178,9 +178,9 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
         },
         function(err, success){
           if (err == null) {
-            // res.redirect('/signin');
+            res.redirect('http://localhost/signin');
           } else {
-            // res.redirect('/signup');
+            res.redirect('http://localhost/signup');
             console.log(err);
           }
         }
@@ -190,23 +190,10 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
 });
 
 app.post('/signin',
-	passport.authenticate('local',
-		{
-			failureRedirect: '/signin'
-		}
-	),
-	function(req, res, next){
-		fetch('http://localhost:3000/signin',
-			{
-				credentials: 'include'
-			}
-		).then(function(){
-			// res.redirect('/');
-		}).catch(function(e){
-			console.log(e);
-		});
-	}
-);
+passport.authenticate('local', 
+{successRedirect: 'http://localhost/mypage',
+failureRedirect: 'http://localhost/signin',
+session: true}));
 
 
 // catch 404 and forward to error handler

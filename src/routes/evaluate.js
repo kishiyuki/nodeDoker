@@ -62,7 +62,7 @@ router.get('/', function(req, res, next){
         // if(req.user.email == users[i].email){
         //   sender = users[i];
         // }
-        // if(req.user.receiver_id == users[i].id){
+        // if(req.query.receiver_id == users[i].id){
         //   receiver = users[i];
         // }
         if(req.query.email == users[i].email){

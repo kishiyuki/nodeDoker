@@ -35,14 +35,12 @@ router.get('/', function(req, res, next){
     } else{
     }
     eventlist = events;
-  }
-  async function total(){
-    await all();
     obj = {
       eventlist:eventlist
     }
     res.json(obj);
   }
+  
   // if(req.user){
     total();
   // } else {
@@ -92,7 +90,13 @@ router.get('/t', function(req, res, next){
     res.json(obj);
   }
   // if(req.user){
-    tag();
+    (async () => {
+      try {
+        await tag();
+      } finally {
+        conn.end();
+      }
+    })()
   // } else {
   //     res.redirect("auth/signin")
   // }

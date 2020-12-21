@@ -1,0 +1,23 @@
+{
+    "lang": "javascript",
+    "version": "1.0.0",
+    "abi": [
+        {
+            "name": "add",
+            "args": [
+                "string",
+                "string"
+            ],
+            "amountLimit": [],
+            "description": ""
+        },
+        {
+            "name": "destroy",
+            "args": [
+                "string"
+            ],
+            "amountLimit": [],
+            "description": ""
+        }
+    ]
+}

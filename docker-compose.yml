@@ -19,8 +19,7 @@ services:
 
   iost:
     image: iostio/iost-node:3.4.0-d8e9b5a
-
-    #環境変数設定。タイムゾーンを日本時間に設定。
+    
     ports:
       - '30000-30003:30000-30003'
     networks:

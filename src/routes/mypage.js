@@ -41,12 +41,12 @@ router.get('/', function(req, res, next) {
   async function getUser(){
     const users = await query('select * from users;');
     for (i = 0; i < users.length; i++) {
-      // if(req.user.email == users[i].email){
-      //   id2 = users[i].id;
-      //   username = users[i].user_name;
-      //   profession2 = users[i].profession;
-      // }
-      if(req.body.email == users[i].email){
+      if(req.user.email == users[i].email){
+        id2 = users[i].id;
+        username = users[i].user_name;
+        profession2 = users[i].profession;
+      }
+      if(req.query.email == users[i].email){
         id2 = users[i].id;
         username = users[i].user_name;
         profession2 = users[i].profession;
@@ -56,7 +56,11 @@ router.get('/', function(req, res, next) {
 
   async function school(){
     if(profession2 == "school"){
-    //   res.redirecct('auth/eventall');
+      obj = {
+        profession:profession2,
+        username:username
+      }
+      res.json(obj);
     }
   }
 
@@ -197,6 +201,7 @@ router.get('/', function(req, res, next) {
       }
       social2.sort(compare);
       obj = {
+        profession:profession2,
         eventlist:eventlist,
         username:username,
         ss:ss,
@@ -239,6 +244,7 @@ router.get('/', function(req, res, next) {
         eventlist = events;
       }
       obj = {
+        profession:profession2,
         eventlist:eventlist,
         username:username
       }

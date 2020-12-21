@@ -4,9 +4,9 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	if (req.user) {
-		// res.redirect("/mypage");
+		res.redirect("http://localhost/mypage");
 	} else {
-		// res.redirect("/signin");
+		res.redirect("http://localhost/signin");
 	}
 });
 

@@ -12,11 +12,12 @@ let connection = mysql.createConnection({
 });
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
+  console.log(req.user);
   let obj;
   let teachers;
   let tags;
   let profession;
-  async function crate(){
+  async function create(){
     // const users = await query('select * from users;');
     // if (req.user.email) {
     //   for (i = 0; i < users.length; i++) {
@@ -26,7 +27,7 @@ router.get('/', function(req, res, next){
     //   }
     // }
     // if(profession == "school"){
-    const teacher = await query('select * user_name from users where profession = "teacher";');
+    const teacher = await query('select user_name from users where profession = "teacher";');
     const tag = await query('select * from tags;');
     teachers = teacher;
     tags = tag;
@@ -50,10 +51,19 @@ router.post('/', [body("event_name").not().isEmpty().withMessage("イベント�
                   body("deadline").isISO8601().withMessage("申し込み締切日を入力してください。").isAfter(getStringFromDate(new Date())).withMessage("申し込み締切日が過ぎています。")
 ],(req, res, next) =>{
   const errors = validationResult(req);
+  let obj;
+  let teachers;
+  let tags;
   async function create(){
-    const teachers = await query('select * user_name from users where profession = "teacher";');
+    const teachers = await query('select user_name from users where profession = "teacher";');
     const tags = await query('select * from tags;');
-    // res.render('auth/eventcreate', {teachers,tags});
+    teachers = teacher;
+    tags = tag;
+    obj = {
+      teachers:teachers,
+      tags:tags
+    }
+    res.json(obj);
   }
   let now = getStringFromDate(new Date());
   async function add(){
