@@ -3,7 +3,11 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	res.redirect('http://localhost/signin');
+	let obj;
+	obj = {
+		status:200
+	  };
+	  res.json(obj);
 });
 
 

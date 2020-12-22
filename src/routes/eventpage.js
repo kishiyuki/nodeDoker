@@ -26,17 +26,9 @@ router.get('/', function(req, res, next){
   var lastday2;
   async function getUser() {
     const users = await query('select * from users;');
-    // if (req.user.email) {
-    //   for (i = 0; i < users.length; i++) {
-    //     if(req.user.email == users[i].email){
-    //       id2 = users[i].id;
-    //       profession2 = users[i].profession;
-    //     }
-    //   }
-    // }
-    if (req.query.email) {
+    if (req.user.email) {
       for (i = 0; i < users.length; i++) {
-        if(req.query.email == users[i].email){
+        if(req.user.email == users[i].email){
           id2 = users[i].id;
           profession2 = users[i].profession;
         }
@@ -127,15 +119,19 @@ router.get('/', function(req, res, next){
     await part();
     obj = {
       eventlist:eventlist,
-      branch:branch
+      branch:branch,
+      status:200
     }
     res.json(obj);
   }
-  // if(req.user){
+  if(req.user){
     total();
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
+  } else {
+    obj = {
+      status:401
+    }
+    res.json(obj);
+  }
 });
 
 router.post('/', function(req, res, next){
@@ -150,24 +146,37 @@ router.post('/', function(req, res, next){
         function(err, success){
           if (err == null) {
             console.log("成功したのでイベントallに戻る");
-            // res.redirect('/eventall');
+            obj = {
+              status:200
+            };
+            res.json(obj);
           } else {
             console.log("ミスしたのでイベントページに戻る");
-            // res.redirect('/eventall');
+            obj = {
+              status:500
+            };
+            res.json(obj);
             console.log(err);
           }
         }
         );
       } else {
         console.log("参加資格がないのでイベントページに戻る");
+        obj = {
+          status:400
+        };
+        res.json(obj);
       }
     }
   }
-  // if(req.user){
+  if(req.user){
     participate();
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
+  } else {
+    obj = {
+      status:401
+    }
+    res.json(obj);
+  }
 });
 function getStringFromDate(date) {
 

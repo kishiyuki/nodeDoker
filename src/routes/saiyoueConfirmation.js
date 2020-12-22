@@ -25,218 +25,6 @@ let connection = mysql.createConnection({
     database: 'portfoliopj'
 });
 const query = util.promisify(connection.query).bind(connection);
-// router.get('/', function (req, res, next) {
-//     let obj;
-//     let id2;
-//     let eventlist;
-//     let evaluates_free;
-//     let free;
-//     let scomments = [];
-//     let tcomments = [];
-//     let searchname = " and sender_id = 99999";
-//     let searchname2 = " and sender_id = 99999";
-//     let searchname3 = "20 and id = 30";
-//     let tagid = [];
-//     let tagname = [];
-//     let teachername = [];
-//     let c;
-//     const ss = Array.from({ length: 3 }, () => 0);
-//     const ts = Array.from({ length: 3 }, () => 0);
-//     let tactionscore = 0;
-//     let tthinkscore = 0;
-//     let tteamscore = 0;
-//     let ttotalactionscore = 0;
-//     let ttotalthinkscore = 0;
-//     let ttotalteamscore = 0;
-//     let sactionscore = 0;
-//     let sthinkscore = 0;
-//     let steamscore = 0;
-//     let stotalactionscore = 0;
-//     let stotalthinkscore = 0;
-//     let stotalteamscore = 0;
-//     const social = Array.from({ length: 12 }, () => 0);
-//     const social2 = Array.from({ length: 12 }, () => 0);
-
-//     async function getId() {
-//         const users = await query('select * from users;');
-//         if (req.user.email) {
-//             for (i = 0; i < users.length; i++) {
-//                 if(req.user.email == users[i].email){
-//                     id2 = users[i].id;
-//                 }
-//             }
-//         }
-//     }
-//     async function addTag() {
-//         const events = await query('select * from events where id = ' + req.query.event_id + ';');
-//         if (events.length != 0) {
-//             const events_tags = await query('select * from events_tags;');
-//             const tags = await query('select * from tags;');
-//             c = 0;
-//             tagid[0] = [];
-//             for (var j = 0; j < events_tags.length; j++) {
-//                 if (events[0].id == events_tags[j].event_id) {
-//                     tagid[0][c] = events_tags[j].tags_id;
-//                     tagname[c] = tags[tagid[0][c] - 1].tag;
-//                     c++;
-//                 }
-//             }
-//             events[0]["tags"] = tagname;
-//             eventlist = events;
-//         }
-//     }
-//     async function addTeacher() {
-//         const events_teachers = await query('select * from events_teachers where event_id = ' + req.query.event_id + ';');
-//         searchname3 = events_teachers[0].teacher_id.toString();
-//         if (events_teachers.length > 1) {
-//             for (var i = 1; i < events_teachers.length; i++) {
-//                 searchname3 = searchname3 + " or id = " + events_teachers[i].event_id.toString();
-//             }
-//         }
-//         const teachers = await query('select * from users where id = ' + searchname3 + ';');
-//         if(teachers.length != 0){
-//             for (var i = 0; i < teachers.length; i++) {
-//                 teachername[i] = teachers[i].user_name;
-//             }
-//             eventlist[0]["teachers"] = teachername;
-//         }
-//     }
-//     async function studentScore() {
-//         const studentid = await query('select * from users where profession = "student";');
-//         if (studentid.length != 0) {
-//             searchname = " and (sender_id = " + studentid[0].id.toString();
-//             for (var i = 1; i < studentid.length; i++) {
-//                 searchname = searchname + " or sender_id = " + studentid[i].id.toString();
-//             }
-//             searchname = searchname + ")"
-//         }
-//         const student = await query('select * from evaluates where receiver_id = ' + id2.toString() + " and event_id = " + req.query.event_id + searchname + ';');
-//         freeid = [];
-//         evaluates_free = await query('select * from evaluates_free;');
-//         free = await query('select * from free;');
-//         for (var i = 0; i < free.length; i++) {
-//             social[i] = {
-//                 name: free[i].freedom,
-//                 count: 0
-//             }
-//         }
-//         if (student.length != 0) {
-//             for (var i = 0; i < student.length; i++) {
-//                 stotalactionscore = stotalactionscore + student[i].action;
-//                 stotalthinkscore = stotalthinkscore + student[i].think;
-//                 stotalteamscore = stotalteamscore + student[i].team;
-//                 scomments[i] = student[i].comments;
-//                 if (evaluates_free.length != 0) {
-//                     for (var j = 0; j < evaluates_free.length; j++) {
-//                         for (var k = 0; k < free.length; k++) {
-//                             if(student[i].id == evaluates_free[j].evaluate_id){
-//                                 if (evaluates_free[j].free_id == free[k].id) {
-//                                     social[k].count++;
-//                                 }
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//             sactionscore = Math.round(stotalactionscore / student.length * 10) / 10;
-//             sthinkscore = Math.round(stotalthinkscore / student.length * 10) / 10;
-//             steamscore = Math.round(stotalteamscore / student.length * 10) / 10;
-//             ss[0] = {
-//                 action: sactionscore
-//             }
-//             ss[1] = {
-//                 think: sthinkscore
-//             }
-//             ss[2] = {
-//                 team: steamscore
-//             }
-//         }
-//     }
-//     async function teacherScore() {
-//         const teacherid = await query('select * from users where profession = "teacher";');
-//         if (teacherid.length != 0) {
-//             searchname2 = " and (sender_id = " + teacherid[0].id.toString();
-//             for (var i = 1; i < teacherid.length; i++) {
-//                 searchname2 = searchname2 + " or sender_id = " + teacherid[i].id.toString();
-//             }
-//             searchname2 = searchname2 + ")"
-//         }
-//         const teacher = await query('select * from evaluates where receiver_id = ' + id2.toString() + " and event_id = " + req.query.event_id + searchname2 + ';');
-//         freeid = [];
-//         evaluates_free = await query('select * from evaluates_free;');
-//         free = await query('select * from free;');
-//         for (var i = 0; i < free.length; i++) {
-//             social2[i] = {
-//                 name: free[i].freedom,
-//                 count: 0
-//             }
-//         }
-//         if (teacher.length != 0) {
-//             for (var i = 0; i < teacher.length; i++) {
-//                 ttotalactionscore = ttotalactionscore + teacher[i].action;
-//                 ttotalthinkscore = ttotalthinkscore + teacher[i].think;
-//                 ttotalteamscore = ttotalteamscore + teacher[i].team;
-//                 tcomments[i] = teacher[i].comments;
-//                 if (evaluates_free.length != 0) {
-//                     for (var j = 0; j < evaluates_free.length; j++) {
-//                         for (var k = 0; k < free.length; k++) {
-//                             if(teacher[i].id == evaluates_free[j].evaluate_id){
-//                                 if (evaluates_free[j].free_id == free[k].id) {
-//                                     social2[k].count++;
-//                                 }
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//             tactionscore = Math.round(ttotalactionscore / teacher.length * 10) / 10;
-//             tthinkscore = Math.round(ttotalthinkscore / teacher.length * 10) / 10;
-//             tteamscore = Math.round(ttotalteamscore / teacher.length * 10) / 10;
-
-//             ts[0] = {
-//                 action: tactionscore
-//             }
-//             ts[1] = {
-//                 think: tthinkscore
-//             }
-//             ts[2] = {
-//                 team: tteamscore
-//             }
-//         }
-//     }
-//     async function total() {
-//         await getId();
-//         await addTag();
-//         await addTeacher();
-//         await studentScore();
-//         await teacherScore();
-//         await social.sort(compare);
-//         await social2.sort(compare);
-//         obj = {
-//             eventlist: eventlist,
-//             ss: ss,
-//             social:social,
-//             scomments:scomments,
-//             ts:ts,
-//             social2:social2,
-//             tcomments:tcomments,
-//             status:200
-//         };
-//         res.json(obj);
-//     }
-
-//     if(req.user) {
-//         total();
-//     } else {
-//         console.log("sign inへ")
-//         obj = {
-//             status:401
-//         }
-//         res.json(obj);
-//     }
-// });
-
-
 router.get('/', function (req, res, next) {
     let obj;
     let id2;
@@ -276,9 +64,9 @@ router.get('/', function (req, res, next) {
     const social2 = Array.from({ length: 12 }, () => 0);
     async function getId() {
         const users = await query('select * from users;');
-        if (req.user.email) {
+        if (req.query.email) {
             for (i = 0; i < users.length; i++) {
-                if (req.user.email == users[i].email) {
+                if (req.query.email == users[i].email) {
                     id2 = users[i].id;
                 }
             }
@@ -499,14 +287,7 @@ router.get('/', function (req, res, next) {
         };
         res.json(obj);
     }
-    if(req.user){
-        total();
-    } else {
-        obj = {
-          status:401
-        }
-        res.json(obj);
-    }
+    total();
 });
 
 async function getHistory(address, id, attr) {
@@ -523,6 +304,7 @@ async function getHistory(address, id, attr) {
     }((await iost.rpc.blockchain.getContractStorage(address, id, attr)).data));
     return history;
 }
+
 function compare(a, b) {
     var r = 0;
     if (a.count > b.count) { r = -1; }

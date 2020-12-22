@@ -46,11 +46,6 @@ router.get('/', function(req, res, next) {
         username = users[i].user_name;
         profession2 = users[i].profession;
       }
-      if(req.query.email == users[i].email){
-        id2 = users[i].id;
-        username = users[i].user_name;
-        profession2 = users[i].profession;
-      }
     }
   }
 
@@ -58,7 +53,8 @@ router.get('/', function(req, res, next) {
     if(profession2 == "school"){
       obj = {
         profession:profession2,
-        username:username
+        username:username,
+        status:200
       }
       res.json(obj);
     }
@@ -207,7 +203,8 @@ router.get('/', function(req, res, next) {
         ss:ss,
         social:social,
         ts:ts,
-        social2:social2
+        social2:social2,
+        status:200
       }
       res.json(obj);
     }
@@ -246,7 +243,8 @@ router.get('/', function(req, res, next) {
       obj = {
         profession:profession2,
         eventlist:eventlist,
-        username:username
+        username:username,
+        status:200
       }
       res.json(obj);
     }
@@ -260,11 +258,15 @@ router.get('/', function(req, res, next) {
     await studentScore2();
     await teacher();
   }
-  // if(req.user){
+  if(req.user){
     total();
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
+  } else {
+    console.log("sign inページへ")
+    obj = {
+      status:401
+    }
+    res.json(obj);
+  }
 });
 
 function compare( a, b ){

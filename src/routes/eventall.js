@@ -35,17 +35,24 @@ router.get('/', function(req, res, next){
     } else{
     }
     eventlist = events;
+  }
+  async function total(){
+    await all();
     obj = {
-      eventlist:eventlist
+      eventlist:eventlist,
+      status:200
     }
     res.json(obj);
   }
-  
-  // if(req.user){
+  if(req.user){
     total();
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
+  } else {
+    console.log("sign inページへ");
+    obj = {
+      status:401
+    }
+    res.json(obj);
+  }
 });
 
 router.get('/t', function(req, res, next){
@@ -85,21 +92,20 @@ router.get('/t', function(req, res, next){
     }
     eventlist = events;
     obj = {
-      eventlist:eventlist
+      eventlist:eventlist,
+      status:200
     }
     res.json(obj);
   }
-  // if(req.user){
-    (async () => {
-      try {
-        await tag();
-      } finally {
-        conn.end();
-      }
-    })()
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
+  if(req.user){
+    tag();
+  } else {
+    console.log("sign inページへ");
+    obj = {
+      status:401
+    }
+    res.json(obj);
+  }
 });
 
 router.get('/d', function(req, res, next){
@@ -108,6 +114,35 @@ router.get('/d', function(req, res, next){
   let c;
   let eventlist;
   let today = getStringFromDate(new Date());
+
+  async function all(){
+    const events = await query("select * from events;");
+    const events_tags = await query('select * from events_tags;');
+    const tags = await query('select * from tags;');
+    if(events.length != 0){
+      for(var i = 0; i<events.length; i++){
+        tagid[i] = [];
+        c = 0;
+        var tagname = [];
+        for(var j = 0; j<events_tags.length; j++){
+          if(events[i].id == events_tags[j].event_id){
+            tagid[i][c] = events_tags[j].tags_id;
+            tagname[c] = tags[tagid[i][c]-1].tag;
+            c++;
+          }
+        }
+        events[i]["tags"] = tagname;
+      }
+    } else{
+    }
+    eventlist = events;
+    obj = {
+      eventlist:eventlist,
+      status:200
+    }
+    res.json(obj);
+  }
+
   async function day1(){
     const events = await query('SELECT * FROM events WHERE start_day BETWEEN "' + req.query.startday.toString() + '" AND "' + req.query.lastday.toString() + '";');
     const events_tags = await query('select * from events_tags;');
@@ -130,7 +165,8 @@ router.get('/d', function(req, res, next){
     }
     eventlist = events;
     obj = {
-      eventlist:eventlist
+      eventlist:eventlist,
+      status:200
     }
     res.json(obj);
   }
@@ -156,7 +192,8 @@ router.get('/d', function(req, res, next){
     }
     eventlist = events;     
     obj = {
-      eventlist:eventlist
+      eventlist:eventlist,
+      status:200
     }
     res.json(obj);
   }
@@ -182,11 +219,12 @@ router.get('/d', function(req, res, next){
     }
     eventlist = events; 
     obj = {
-      eventlist:eventlist
+      eventlist:eventlist,
+      status:200
     }
     res.json(obj);
   }
-  // if(req.user){
+  if(req.user){
     if(req.query.lastday && req.query.startday){
       day1();
     } else if(req.query.startday && !req.query.lastday){
@@ -194,11 +232,15 @@ router.get('/d', function(req, res, next){
     } else if(!req.query.startday && req.query.lastday){
       day3();
     } else {
-      // res.redirect("auth/eventall")
+      all();
     }
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
+  } else {
+    console.log("sign inページへ");
+    obj = {
+      status:401
+    }
+    res.json(obj);
+  }
 });
 
 router.get('/s', function(req, res, next){
@@ -206,7 +248,6 @@ router.get('/s', function(req, res, next){
   let tagid = [];
   let c;
   let eventlist;
-  console.log("ああああああああああいいいいいいいいいいい"+ req.query.search);
   async function search(){
     const events = await query("select * from events where event_name like '" + req.query.search +"%';");
     const events_tags = await query('select * from events_tags;');
@@ -229,15 +270,20 @@ router.get('/s', function(req, res, next){
     }
     eventlist = events;
     obj = {
-      eventlist:eventlist
+      eventlist:eventlist,
+      status:200
     }
     res.json(obj);
   }
-  // if(req.user){
+  if(req.user){
     search();
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
+  } else {
+    console.log("sign inページへ");
+    obj = {
+      status:401
+    }
+    res.json(obj);
+  }
 });
 function getStringFromDate(date) {
 

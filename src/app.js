@@ -31,6 +31,8 @@ let eventpageRouter = require('./routes/eventpage');
 let eventallRouter = require('./routes/eventall');
 let myPageRouter = require('./routes/mypage');
 let eConfirmationRouter = require('./routes/eConfirmation');
+let saiyoumyPageRouter = require('./routes/saiyoumypage');
+let saiyoueConfirmationRouter = require('./routes/saiyoueConfirmation');
 
 let app = express();
 
@@ -154,6 +156,8 @@ app.use('/eventall', eventallRouter);
 app.use('/eventpage', eventpageRouter);
 app.use('/mypage', myPageRouter);
 app.use('/eConfirmation', eConfirmationRouter);
+app.use('/saiyoumypage', myPageRouter);
+app.use('/saiyoueConfirmation', eConfirmationRouter);
 
 // signup時にsigninを実行したい
 // 現状はsignupした後、signinページから入らないといけない
@@ -163,9 +167,13 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
                      body("profession").not().isEmpty().withMessage("職業を入力してください。")
                    ], (req, res, next) =>{
     const errors = validationResult(req);
+    let obj;
     if (!errors.isEmpty()) {
       console.log(errors);
-      res.redirect('http://localhost/signup');
+      obj = {
+        status:400
+      };
+      res.json(obj);
     }else {
       connection.query('select * from users;', function(err, users){
         connection.query('insert into users set ? ;', {
@@ -178,9 +186,15 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
         },
         function(err, success){
           if (err == null) {
-            res.redirect('http://localhost/signin');
+            obj = {
+              status:200
+            };
+            res.json(obj);
           } else {
-            res.redirect('http://localhost/signup');
+            obj = {
+              status:500
+            };
+            res.json(obj);
             console.log(err);
           }
         }
@@ -191,9 +205,13 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
 
 app.post('/signin',
 passport.authenticate('local', 
-{successRedirect: 'http://localhost/mypage',
-failureRedirect: 'http://localhost/signin',
-session: true}));
+{session: true})),
+function(req, res){
+  obj = {
+    status:200
+  };
+  res.json(obj);
+}
 
 
 // catch 404 and forward to error handler

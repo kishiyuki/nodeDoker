@@ -24,67 +24,78 @@ router.get('/', function(req, res, next){
   let branch;
   let students;
   async function evaluate() {
-    // const users = await query('select * from users;');
-    // if (req.user.email) {
-    //   for (i = 0; i < users.length; i++) {
-    //     if(req.user.email == users[i].email){
-    //       id = users[i].id;
-    //       profession = users[i].profession;
-    //     }
-    //   }
-    // }
-    // if(profession == "student"){
-    //   const events_students_con = await query('select * from events_students where event_id = ' + events[0].id + ' and student_id = ' + id +';');
-    //   if(events_students_con != 0){
-    //     bool = true;
-    //   }
-    // } else if (profession == "teacher"){
-    //   const events_teachers_con = await query('select * from events_teachers where event_id = ' + events[0].id + ' and teacher_id = ' + id +';');
-    //   if(events_teachers_con != 0){
-    //     bool = true;
-    //   }
-    // } else if (profession == "school"){
-    //   bool = true;
-    // }
-    // if(bool){
-    const events = await query('select * from events where id = ' + req.query.event_id + ';');
-    const events_students = await query('select * from events_students where event_id = ' + events[0].id + ';');
-    startday = getStringFromDate(events[0].start_day);
-    lastday = getStringFromDate3(events[0].last_day);
-    today2 = new Date(today);
-    startday2 = new Date(startday);
-    lastday2 = new Date(lastday);
-    if(events_students.length != 0){
-      searchname = events_students[0].student_id;
-      if(events_students.length > 1){
-        for(var i = 1; i<events_students.length; i++){
-          searchname = searchname + " or id = " + events_students[i].student_id;
+    const users = await query('select * from users;');
+    if (req.user.email) {
+      for (i = 0; i < users.length; i++) {
+        if(req.user.email == users[i].email){
+          id = users[i].id;
+          profession = users[i].profession;
         }
       }
-    } else {
-      serachname = "20 and id = 30";
     }
-    const users = await query('select * from users where id = ' + searchname + ';');
-    if (startday2<=today2 && today2<=lastday2){
-      branch = 0;
-      console.log("評価できるよ！");
-    } else {
-      branch = 1;
-      console.log("評価できないよ！")
+    if(profession == "student"){
+      const events_students_con = await query('select * from events_students where event_id = ' + events[0].id + ' and student_id = ' + id +';');
+      if(events_students_con != 0){
+        bool = true;
+      }
+    } else if (profession == "teacher"){
+      const events_teachers_con = await query('select * from events_teachers where event_id = ' + events[0].id + ' and teacher_id = ' + id +';');
+      if(events_teachers_con != 0){
+        bool = true;
+      }
+    } else if (profession == "school"){
+      bool = true;
     }
-    students = users;
+    if(bool){
+      const events = await query('select * from events where id = ' + req.query.event_id + ';');
+      const events_students = await query('select * from events_students where event_id = ' + events[0].id + ';');
+      startday = getStringFromDate(events[0].start_day);
+      lastday = getStringFromDate3(events[0].last_day);
+      today2 = new Date(today);
+      startday2 = new Date(startday);
+      lastday2 = new Date(lastday);
+      if(events_students.length != 0){
+        searchname = events_students[0].student_id;
+        if(events_students.length > 1){
+          for(var i = 1; i<events_students.length; i++){
+            searchname = searchname + " or id = " + events_students[i].student_id;
+          }
+        }
+      } else {
+        serachname = "20 and id = 30";
+      }
+      const users = await query('select * from users where id = ' + searchname + ';');
+      if (startday2<=today2 && today2<=lastday2){
+        branch = 0;
+        console.log("評価できるよ！");
+      } else {
+        branch = 1;
+        console.log("評価できないよ！")
+      }
+      students = users;
+      obj = {
+        students:students,
+        branch:branch,
+        status:200
+      }
+      res.json(obj);
+    } else {
+      console.log("マイページへ")
+      obj = {
+        status:400
+      }
+      res.json(obj);
+    }
+  }
+  if(req.user){
+    evaluate();
+  } else {
+    console.log("sign inページへ")
     obj = {
-      students:students,
-      branch:branch
+      status:401
     }
     res.json(obj);
-  // }
   }
-  // if(req.user){
-    evaluate();
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
 });
 function getStringFromDate(date) {
 

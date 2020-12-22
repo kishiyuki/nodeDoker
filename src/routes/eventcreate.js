@@ -18,31 +18,41 @@ router.get('/', function(req, res, next){
   let tags;
   let profession;
   async function create(){
-    // const users = await query('select * from users;');
-    // if (req.user.email) {
-    //   for (i = 0; i < users.length; i++) {
-    //     if(req.user.email == users[i].email){
-    //       profession = users[i].profession;
-    //     }
-    //   }
-    // }
-    // if(profession == "school"){
-    const teacher = await query('select user_name from users where profession = "teacher";');
-    const tag = await query('select * from tags;');
-    teachers = teacher;
-    tags = tag;
+    const users = await query('select * from users;');
+    if (req.user.email) {
+      for (i = 0; i < users.length; i++) {
+        if(req.user.email == users[i].email){
+          profession = users[i].profession;
+        }
+      }
+    }
+    if(profession == "school"){
+      const teacher = await query('select user_name from users where profession = "teacher";');
+      const tag = await query('select * from tags;');
+      teachers = teacher;
+      tags = tag;
+      obj = {
+        teachers:teachers,
+        tags:tags
+      }
+      res.json(obj);
+    } else {
+      console.log("学校アカウントじゃ無いから作成できないよ。マイページへ");
+      obj = {
+        status:400
+      }
+      res.json(obj);
+    }
+  }
+  if(req.user){
+    create();
+  } else {
+    console.log("sign inページへ");
     obj = {
-      teachers:teachers,
-      tags:tags
+      status:401
     }
     res.json(obj);
-  // }
   }
-  // if(req.user){
-    create();
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
 });
 router.post('/', [body("event_name").not().isEmpty().withMessage("イベント名を入力してください。").isLength({min:0,max:30000}).withMessage("イベント名が長過ぎます。"),
                   body("start_day").isISO8601().withMessage("開催日を入力してください。").isAfter(getStringFromDate(new Date())).withMessage("開催日が過ぎています。"),
@@ -52,8 +62,6 @@ router.post('/', [body("event_name").not().isEmpty().withMessage("イベント�
 ],(req, res, next) =>{
   const errors = validationResult(req);
   let obj;
-  let teachers;
-  let tags;
   async function create(){
     const teachers = await query('select user_name from users where profession = "teacher";');
     const tags = await query('select * from tags;');
@@ -61,71 +69,91 @@ router.post('/', [body("event_name").not().isEmpty().withMessage("イベント�
     tags = tag;
     obj = {
       teachers:teachers,
-      tags:tags
+      tags:tags,
+      status:400
     }
     res.json(obj);
   }
   let now = getStringFromDate(new Date());
   async function add(){
-    // const users = await query('select * from users;');
-    // if (req.user.email) {
-    //   for (i = 0; i < users.length; i++) {
-    //     if(req.user.email == users[i].email){
-    //       profession = users[i].profession;
-    //     }
-    //   }
-    // }
-    // if(profession == "school"){
-    connection.query('insert into events set ? ;', {
-      event_name: req.body.event_name,
-      start_day: req.body.start_day,
-      last_day: req.body.last_day,
-      comments: req.body.comments,
-      deadline: req.body.deadline,
-      created_at: now,
-      updated_at: now
-    },function(err, success){
-      if (err == null) {
-        connection.query('select * from events where event_name = "' + req.body.event_name + '" and created_at = "' + now.toString() +'";', function(err, events2){
-          for(var i = 0; i<req.body.tags.length; i++){
-            connection.query('insert into events_tags set ? ;', {
-              event_id: events2[0].id,
-              tags_id: req.body.tags[i],
-            },function(err, success2){
-              if(err == null){
-              } else {
-                console.log(err);
-              }
-            });
-          }
-          for(var i = 0; i<req.body.teachers.length; i++){
-            connection.query('insert into events_teachers set ? ;', {
-              event_id: events2[0].id,
-              teacher_id: req.body.teachers[i],
-            },function(err, success2){
-              if(err == null){
-              } else {
-                console.log(err);
-              }
-            });
-          }
-        });
-      }else {
-        console.log(err);
-        // res.redirect('/eventcreate');
+    const users = await query('select * from users;');
+    if (req.user.email) {
+      for (i = 0; i < users.length; i++) {
+        if(req.user.email == users[i].email){
+          profession = users[i].profession;
+        }
       }
-    });
-  // }
+    }
+    if(profession == "school"){
+      connection.query('insert into events set ? ;', {
+        event_name: req.body.event_name,
+        start_day: req.body.start_day,
+        last_day: req.body.last_day,
+        comments: req.body.comments,
+        deadline: req.body.deadline,
+        created_at: now,
+        updated_at: now
+      },function(err, success){
+        if (err == null) {
+          connection.query('select * from events where event_name = "' + req.body.event_name + '" and created_at = "' + now.toString() +'";', function(err, events2){
+            for(var i = 0; i<req.body.tags.length; i++){
+              connection.query('insert into events_tags set ? ;', {
+                event_id: events2[0].id,
+                tags_id: req.body.tags[i],
+              },function(err, success2){
+                if(err == null){
+                } else {
+                  console.log(err);
+                }
+              });
+            }
+            for(var i = 0; i<req.body.teachers.length; i++){
+              connection.query('insert into events_teachers set ? ;', {
+                event_id: events2[0].id,
+                teacher_id: req.body.teachers[i],
+              },function(err, success2){
+                if(err == null){
+                } else {
+                  console.log(err);
+                }
+              });
+            }
+          });
+          console.log("マイページへ");
+          obj = {
+            status:200
+          }
+          res.json(obj);
+        }else {
+          console.log(err);
+          console.log("イベント作成ページへ");
+          obj = {
+            status:500
+          }
+          res.json(obj);
+        }
+      });
+    } else {
+      console.log("学校アカウントじゃ無いから作成できないよ。マイページへ");
+      obj = {
+        status:400
+      }
+      res.json(obj);
+    }
   }
-  // if(req.user){
-  if (!errors.isEmpty()) {
-    create();
-  }　else {
-    add();
+  if(req.user){
+    if (!errors.isEmpty()) {
+      create();
+    }　else {
+      add();
+    }
+  } else {
+    console.log("sign inページへ");
+    obj = {
+      status:401
+    }
+    res.json(obj);
   }
-  // } else {
-  //     res.redirect("auth/signin")
-  // }
 });
 
 function getStringFromDate(date) {
