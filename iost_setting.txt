@@ -1,0 +1,28 @@
+iost環境に入る
+docker exec -it 13478bd278f1 /bin/bash
+
+nodeDoker/iost/Contract.jsをコピペ
+vim Contract.js
+
+アドミンアカウントのインポート
+iwallet account import admin 2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1
+
+コンパイル
+iwallet compile Contract.js
+
+パブリッシュ
+iwallet --account admin --chain_id=1020 publish Contract.js Contract.js.abi
+
+ターミナルの最後の行
+The contract id is: Contract6ANdnmpytxdoewXoimN9c6hjuSLYLD3bhonHbX7TGuma
+のis :より右をコピーしevaluate.js,　eConfi.js,　saiyoueConfi.jsのiost.callの後ろを書き換える
+
+
+
+dockerを出て
+docker network ls
+でnodedocker2_backendのネットワークidをコピー
+
+docker network inspect d0713af803a
+でiostのIPv4Addressの/の前までをコピーし、
+evaluate.js,　eConfi.js,　saiyoueConfi.jsのiostのhostを書き換える
