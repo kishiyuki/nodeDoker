@@ -7,7 +7,6 @@ let logger = require('morgan');
 let passport = require('passport');
 let LocalStrategy = require('passport-local').Strategy;
 let session = require('express-session');
-let fetch = require('isomorphic-fetch');
 let mysql = require('mysql2');
 const { body, validationResult } = require('express-validator');
 let connection = mysql.createConnection({
@@ -205,13 +204,13 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
 
 app.post('/signin',
 passport.authenticate('local', 
-{session: true})),
+{session: true}),
 function(req, res){
   obj = {
     status:200
   };
   res.json(obj);
-}
+});
 
 
 // catch 404 and forward to error handler
