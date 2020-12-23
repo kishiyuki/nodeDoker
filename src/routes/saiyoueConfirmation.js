@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const json = require('body-parser/lib/types/json');
 const { hash } = require('bcrypt');
 const iost = new IOST({
-    host: 'http://192.168.32.3:30001',
+    host: 'http://iost:30001',
     chainId: 1020,
     gasLimit: 1000000
 });

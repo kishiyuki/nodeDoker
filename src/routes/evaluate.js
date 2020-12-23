@@ -7,7 +7,7 @@ const IOST = require('@kunroku/iost')
 const bs58 = require('bs58');
 const crypto = require('crypto');
 const iost = new IOST({
-  host: 'http://192.168.32.3:30001',
+  host: 'http://iost:30001',
   chainId: 1020,
   gasLimit: 1000000
 });
@@ -306,8 +306,8 @@ function getStringFromDate(date) {
   var hour_str = date.getHours();
   var minute_str = date.getMinutes();
   var second_str = date.getSeconds();
-  
-  
+
+
   format_str = 'YYYY-MM-DD hh:mm:ss';
   format_str = format_str.replace(/YYYY/g, year_str);
   format_str = format_str.replace(/MM/g, month_str);
@@ -315,7 +315,7 @@ function getStringFromDate(date) {
   format_str = format_str.replace(/hh/g, hour_str);
   format_str = format_str.replace(/mm/g, minute_str);
   format_str = format_str.replace(/ss/g, second_str);
-  
+
   return format_str;
 };
 
