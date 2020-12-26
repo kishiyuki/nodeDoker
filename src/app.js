@@ -155,8 +155,8 @@ app.use('/eventall', eventallRouter);
 app.use('/eventpage', eventpageRouter);
 app.use('/mypage', myPageRouter);
 app.use('/eConfirmation', eConfirmationRouter);
-app.use('/saiyoumypage', myPageRouter);
-app.use('/saiyoueConfirmation', eConfirmationRouter);
+app.use('/saiyoumypage', saiyoumyPageRouter);
+app.use('/saiyoueConfirmation', saiyoueConfirmationRouter);
 
 // signup時にsigninを実行したい
 // 現状はsignupした後、signinページから入らないといけない
@@ -166,7 +166,7 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
                      body("profession").not().isEmpty().withMessage("職業を入力してください。")
                    ], (req, res, next) =>{
     const errors = validationResult(req);
-    let obj;
+    let obj = {};
     if (!errors.isEmpty()) {
       console.log(errors);
       obj = {

@@ -10,19 +10,19 @@ let connection = mysql.createConnection({
 });
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
-  let obj;
-  let id;
-  let profession;
+  let obj = {};
+  let id = 0;
+  let profession = "";
   let bool = false;
-  let searchname;
+  let searchname = "";
   let today = getStringFromDate(new Date());
   let startday;
   let lastday;
   let today2;
   let startday2;
   let lastday2;
-  let branch;
-  let students;
+  let branch = 1;
+  let students = [];
   async function evaluate() {
     const users = await query('select * from users;');
     if (req.user.email) {
@@ -74,6 +74,7 @@ router.get('/', function(req, res, next){
       }
       students = users;
       obj = {
+        eventlist:events,
         students:students,
         branch:branch,
         status:200

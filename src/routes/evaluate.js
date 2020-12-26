@@ -26,12 +26,12 @@ let connection = mysql.createConnection({
 });
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
-  let profession;
+  let profession = "";
   let bool = false;
-  let obj;
-  let sender;
-  let receiver;
-  let eventlist;
+  let obj = {};
+  let sender = {};
+  let receiver = {};
+  let eventlist = [];
   async function getESR(){
     const users = await query('select * from users;');
     if (req.user.email) {
@@ -98,12 +98,12 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
                   body("team").not().isEmpty().withMessage("チームを入力してください。").isNumeric().withMessage("チームに数字を入力してください。")
                 　],(req, res, next) =>{
   const errors = validationResult(req);
-  let profession;
+  let profession = "";
   let bool = false;
-  let obj;
-  let sender;
-  let receiver;
-  let eventlist;
+  let obj = {};
+  let sender = {};
+  let receiver = {};
+  let eventlist = [];
   async function getESR(){
     const users = await query('select * from users;');
     const events = await query('select * from events where id = ' + req.body.event_id + ';');
@@ -185,7 +185,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       }
     }
   }
-  let address;
+  let address = "";
   let dtx;
   let handler;
   async function destroy(){

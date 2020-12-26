@@ -13,10 +13,10 @@ let connection = mysql.createConnection({
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
   console.log(req.user);
-  let obj;
-  let teachers;
-  let tags;
-  let profession;
+  let obj = {};
+  let teachers = [];
+  let tags = [];
+  let profession = "";
   async function create(){
     const users = await query('select * from users;');
     if (req.user.email) {
@@ -61,7 +61,7 @@ router.post('/', [body("event_name").not().isEmpty().withMessage("イベント�
                   body("deadline").isISO8601().withMessage("申し込み締切日を入力してください。").isAfter(getStringFromDate(new Date())).withMessage("申し込み締切日が過ぎています。")
 ],(req, res, next) =>{
   const errors = validationResult(req);
-  let obj;
+  let obj = {};
   async function create(){
     const teachers = await query('select user_name from users where profession = "teacher";');
     const tags = await query('select * from tags;');

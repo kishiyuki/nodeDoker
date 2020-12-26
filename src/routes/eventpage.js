@@ -10,17 +10,17 @@ let connection = mysql.createConnection({
 });
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
-  let obj;
+  let obj = {};
   let profession2 = "";
-  let id2;
+  let id2 = 0;
   var tagid = [];
   var tagname = [];
-  let eventlist;
+  let eventlist = [];
   var today = getStringFromDate(new Date());
   var today2 = new Date(today);
   var teachername =[];
-  var branch;
-  var c;
+  var branch = 1;
+  var c = 0;
   var deadline;
   var lastday;
   var lastday2;

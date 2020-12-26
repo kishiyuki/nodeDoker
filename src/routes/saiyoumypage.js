@@ -11,13 +11,13 @@ let connection = mysql.createConnection({
 const query = util.promisify(connection.query).bind(connection);
 /* GET home page. */
 router.get('/e', function(req, res, next) {
-    let obj;
+    let obj = {};
     let username = "";
     let profession2 = "";
     let id2 = 0;
-    let eventlist;
+    let eventlist = [];
     let tagid = [];
-    let c;
+    let c = 0;
     let searchid ="99999";
     let searchname =" and sender_id = 99999";
     let searchname2 =" and sender_id = 99999";

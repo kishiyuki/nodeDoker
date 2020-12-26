@@ -26,26 +26,24 @@ let connection = mysql.createConnection({
 });
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function (req, res, next) {
-    let obj;
-    let id2;
+    let obj = {};
+    let id2 = 0;
     let hash;
-    let eventlist;
-    let evaluates_free;
-    let free;
+    let eventlist = [];
     let freeid = [];
     let tcomments = [];
     let scomments = [];
     let freenum = [];
-    let freeStatement;
-    let evaluationStatement;
+    let freeStatement = "";
+    let evaluationStatement = "";
     let searchname = " and sender_id = 99999";
     let searchname2 = " and sender_id = 99999";
     let searchname3 = "20 and id = 30";
     let tagid = [];
     let tagname = [];
     let teachername = [];
-    let a;
-    let c;
+    let a = 0;
+    let c = 0;
     const ss = Array.from({ length: 3 }, () => 0);
     const ts = Array.from({ length: 3 }, () => 0);
     let tactionscore = 0;
@@ -117,8 +115,8 @@ router.get('/', function (req, res, next) {
         }
         const student = await query('select * from evaluates where receiver_id = ' + id2.toString() + " and event_id = " + req.query.event_id + searchname + ';');
         freeid = [];
-        evaluates_free = await query('select * from evaluates_free;');
-        free = await query('select * from free;');
+        const evaluates_free = await query('select * from evaluates_free;');
+        const free = await query('select * from free;');
         for (var i = 0; i < free.length; i++) {
             social[i] = {
                 name: free[i].freedom,

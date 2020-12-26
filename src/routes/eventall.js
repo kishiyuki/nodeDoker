@@ -10,10 +10,10 @@ let connection = mysql.createConnection({
 });
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
-  let obj;
-  let c;
+  let obj = {};
+  let c = 0;
   let tagid = [];
-  let eventlist;
+  let eventlist = [];
   async function all(){
     const events = await query("select * from events;");
     const events_tags = await query('select * from events_tags;');
@@ -56,12 +56,12 @@ router.get('/', function(req, res, next){
 });
 
 router.get('/t', function(req, res, next){
-  let obj;
+  let obj = {};
   let tagid = [];
-  let c;
-  let eventlist;
+  let c = 0;
+  let eventlist = [];
   let count = 1;
-  let name;
+  let name = "";
   let result = req.query.tags.split(',');
 
   console.log(result);
@@ -109,10 +109,10 @@ router.get('/t', function(req, res, next){
 });
 
 router.get('/d', function(req, res, next){
-  let obj;
+  let obj = {};
   let tagid = [];
-  let c;
-  let eventlist;
+  let c = 0;
+  let eventlist = [];
   let today = getStringFromDate(new Date());
 
   async function all(){
@@ -244,10 +244,10 @@ router.get('/d', function(req, res, next){
 });
 
 router.get('/s', function(req, res, next){
-  let obj;
+  let obj = {};
   let tagid = [];
-  let c;
-  let eventlist;
+  let c = 0;
+  let eventlist = [];
   async function search(){
     const events = await query("select * from events where event_name like '" + req.query.search +"%';");
     const events_tags = await query('select * from events_tags;');

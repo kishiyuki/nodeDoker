@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	let obj;
+	let obj = {};
 	obj = {
 		status:200
 	  };
