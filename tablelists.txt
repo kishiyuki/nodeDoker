@@ -8,7 +8,7 @@ create table events_students (id int auto_increment, event_id int, student_id in
 create table events_teachers (id int auto_increment, event_id int, teacher_id int, index(id));
 create table evaluates (id int auto_increment, action int, think int, team int, comments text, txhash text, event_id int, sender_id int, receiver_id int, created_at datetime, index(id));
 create table free (id int auto_increment, freedom varchar(255), index(id));
-create table evaluates_free (id int auto_increment, evaluate_id int, free_id int, index(id));
+create table evaluat/Users/kishimoto/sotu/nodeDocker2/src/routes/eventcreate.jses_free (id int auto_increment, evaluate_id int, free_id int, index(id));
 
 insert
 

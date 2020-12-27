@@ -34,12 +34,12 @@ router.get('/', function(req, res, next){
       }
     }
     if(profession == "student"){
-      const events_students_con = await query('select * from events_students where event_id = ' + events[0].id + ' and student_id = ' + id +';');
+      const events_students_con = await query('select * from events_students where event_id = ' + req.query.event_id + ' and student_id = ' + id +';');
       if(events_students_con != 0){
         bool = true;
       }
     } else if (profession == "teacher"){
-      const events_teachers_con = await query('select * from events_teachers where event_id = ' + events[0].id + ' and teacher_id = ' + id +';');
+      const events_teachers_con = await query('select * from events_teachers where event_id = ' + req.query.event_id + ' and teacher_id = ' + id +';');
       if(events_teachers_con != 0){
         bool = true;
       }
@@ -48,7 +48,7 @@ router.get('/', function(req, res, next){
     }
     if(bool){
       const events = await query('select * from events where id = ' + req.query.event_id + ';');
-      const events_students = await query('select * from events_students where event_id = ' + events[0].id + ';');
+      const events_students = await query('select * from events_students where event_id = ' + req.query.event_id + ';');
       startday = getStringFromDate(events[0].start_day);
       lastday = getStringFromDate3(events[0].last_day);
       today2 = new Date(today);
@@ -64,7 +64,7 @@ router.get('/', function(req, res, next){
       } else {
         serachname = "20 and id = 30";
       }
-      const users = await query('select * from users where id = ' + searchname + ';');
+      const users = await query('select id,user_name,profession from users where id = ' + searchname + ';');
       if (startday2<=today2 && today2<=lastday2){
         branch = 0;
         console.log("評価できるよ！");

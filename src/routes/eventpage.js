@@ -136,7 +136,7 @@ router.get('/', function(req, res, next){
 
 router.post('/', function(req, res, next){
   async function participate() {
-    const users = await query('select * from users where email = ' + req.user.email + ';');
+    const users = await query('select * from users where email = "' + req.user.email + '";');
     if(users.length != 0){
       if(users[0].profession = "student"){
         connection.query('insert into events_students set ? ;', {

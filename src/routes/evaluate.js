@@ -33,7 +33,7 @@ router.get('/', function(req, res, next){
   let receiver = {};
   let eventlist = [];
   async function getESR(){
-    const users = await query('select * from users;');
+    const users = await query('select id,user_name,email,profession from users;');
     if (req.user.email) {
       for (i = 0; i < users.length; i++) {
         if(req.user.email == users[i].email){
@@ -105,7 +105,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
   let receiver = {};
   let eventlist = [];
   async function getESR(){
-    const users = await query('select * from users;');
+    const users = await query('select id,user_name,email,profession from users;');
     const events = await query('select * from events where id = ' + req.body.event_id + ';');
     if (req.user.email) {
       for (i = 0; i < users.length; i++) {
@@ -154,7 +154,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
     }
   }
   async function getSR(){
-    const users = await query('select * from users;');
+    const users = await query('select id,user_name,email,profession from users;');
     if (req.user.email) {
       for (i = 0; i < users.length; i++) {
         if(req.user.email == users[i].email){
@@ -286,7 +286,10 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
     if (!errors.isEmpty()) {
       getESR();
     }else {
+      const startTime = performance.now();
       total();
+      const endTime = performance.now();
+      console.log("全体処理時間: " + endTime - startTime);
     }
   } else {
     console.log("sign inへ")
