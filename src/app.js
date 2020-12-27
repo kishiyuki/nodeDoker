@@ -167,13 +167,7 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
                    ], (req, res, next) =>{
     const errors = validationResult(req);
     let obj = {};
-    if (!errors.isEmpty()) {
-      console.log(errors);
-      obj = {
-        status:400
-      };
-      res.json(obj);
-    }else {
+    async function total(){
       const users = await query('select * from users where email = "' + req.body.emaill + '";');
       if(users.length == 0){
         connection.query('insert into users set ? ;', {
@@ -204,6 +198,15 @@ app.post('/signup', [body("user_name").not().isEmpty().withMessage("名前を入
           status:401
         };
       }
+    }
+    if (!errors.isEmpty()) {
+      console.log(errors);
+      obj = {
+        status:400
+      };
+      res.json(obj);
+    }else {
+      total();
     }
 });
 
