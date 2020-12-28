@@ -251,7 +251,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       function(err, success){
         if (err == null) {
           connection.query('select * from evaluates where txhash = "' + address + '";', function(err, evaluates2){
-            if(req.body.free != null){
+            if(req.body.free.length != 0){
               for(var i = 0; i<req.body.free.length; i++){
                 connection.query('insert into evaluates_free set ? ;', {
                   evaluate_id: evaluates2[0].id,

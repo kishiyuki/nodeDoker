@@ -11,7 +11,7 @@ let connection = mysql.createConnection({
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function(req, res, next){
   let obj = {};
-  let id = 0;
+  let id = -1;
   let profession = "";
   let bool = false;
   let searchname = "";
@@ -77,7 +77,8 @@ router.get('/', function(req, res, next){
         eventlist:events,
         students:students,
         branch:branch,
-        status:200
+        status:200,
+        self_id:id
       }
       res.json(obj);
     } else {

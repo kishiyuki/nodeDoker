@@ -8,6 +8,7 @@ let passport = require('passport');
 let LocalStrategy = require('passport-local').Strategy;
 let session = require('express-session');
 let mysql = require('mysql2');
+const util = require('util');
 const { body, validationResult } = require('express-validator');
 let connection = mysql.createConnection({
   host: 'mysql',
@@ -17,7 +18,7 @@ let connection = mysql.createConnection({
 });
 // let db = require('./models/index');
 const bcrypt = require('bcrypt');
-
+const query = util.promisify(connection.query).bind(connection);
 var user_cache = {};
 
 let indexRouter = require('./routes/index');
