@@ -1,3 +1,4 @@
+const { performance } = require('perf_hooks');
 var express = require('express');
 var router = express.Router();
 let mysql = require('mysql2');
@@ -83,7 +84,7 @@ router.get('/', function(req, res, next){
   }
 
   if(req.user){
-      getESR();
+    getESR();
   } else {
     console.log("sign inへ")
     obj = {
@@ -155,14 +156,22 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
   }
   async function getSR(){
     const users = await query('select id,user_name,email,profession from users;');
-    if (req.user.email) {
+    if (req.body.email) {
       for (i = 0; i < users.length; i++) {
-        if(req.user.email == users[i].email){
+        if(req.body.email == users[i].email){
           id = users[i].id;
           profession = users[i].profession;
         }
       }
     }
+    // if (req.user.email) {
+    //   for (i = 0; i < users.length; i++) {
+    //     if(req.user.email == users[i].email){
+    //       id = users[i].id;
+    //       profession = users[i].profession;
+    //     }
+    //   }
+    // }
     if(profession == "student"){
       const events_students_con = await query('select * from events_students where event_id = ' + req.body.event_id + ' and student_id = ' + id +';');
       if(events_students_con != 0){
@@ -176,14 +185,24 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
     }
     if(users.length != 0){
       for (i = 0; i < users.length; i++) {
-        if(req.user.email == users[i].email){
+        if(req.body.email == users[i].email){
           sender = users[i];
         }
-        if(req.user.receiver_id == users[i].id){
+        if(req.body.receiver_id == users[i].id){
           receiver = users[i];
         }
       }
     }
+    // if(users.length != 0){
+    //   for (i = 0; i < users.length; i++) {
+    //     if(req.user.email == users[i].email){
+    //       sender = users[i];
+    //     }
+    //     if(req.body.receiver_id == users[i].id){
+    //       receiver = users[i];
+    //     }
+    //   }
+    // }
   }
   let address = "";
   let dtx;
@@ -221,22 +240,27 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
   let hash;
   let atx;
   async function add(){
-    if(bool){
+    // if(bool){
       if(req.body.free != null){
         for(var i = 0; i<req.body.free.length; i++){
           freeStatement = freeStatement + req.body.free[i].toString();
         }
       }
+      address = req.body.event_id.toString() + "_" + sender.id.toString() + "_" + req.body.receiver_id.toString();
+      // console.log(address);
       evaluationStatement = req.body.action.toString() + req.body.think.toString() + req.body.team.toString() + req.body.comments.toString() + address.toString() + freeStatement;
-      console.log(evaluationStatement);
+      // console.log(evaluationStatement);
       hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
-      atx = iost.call("ContractCd8WSt1F3N8Kb7PF2JAEZM81HhxWqHKdKEDDvhpDvCDC", "add", [address,hash]);
-      console.log(atx);
+      var txStime = await performance.now();
+      atx = iost.call("Contract2QfR7jsAJajLh7PxwGVu1kzvpoqBF59sVDV5dxWoch3k", "add", [address,hash]);
+      // console.log(atx);
       handler = iost.signAndSend(atx);
       handler.listen();
-      handler.onPending(console.log);
-      handler.onSuccess(console.log);
-      handler.onFailed(console.log);
+      var txEtime =  await performance.now();
+      await console.log("txtime: " + (txEtime - txStime));
+      // handler.onPending(console.log);
+      // handler.onSuccess(console.log);
+      // handler.onFailed(console.log);
       connection.query('insert into evaluates set ? ;', {
         action: req.body.action,
         think: req.body.think,
@@ -270,34 +294,37 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
           console.log(err);
         }
       });
-    }
+    // }
   }
   async function total(){
     await getSR();
-    await destroy();
+    // await destroy();
     await add();
-    console.log("参加者リストへ")
+    // console.log("参加者リストへ")
     obj = {
       status:200
     }
     res.json(obj);
   }
-  if(req.user){
-    if (!errors.isEmpty()) {
-      getESR();
-    }else {
-      const startTime = performance.now();
-      total();
-      const endTime = performance.now();
-      console.log("全体処理時間: " + endTime - startTime);
-    }
-  } else {
-    console.log("sign inへ")
-    obj = {
-      status:401
-    }
-    res.json(obj);
-  }
+  // if(req.user){
+  //   if (!errors.isEmpty()) {
+  //     getESR();
+  //   }else {
+    async function aaaa(){
+      var startTime = await performance.now();
+      await total();
+      var endTime = await performance.now();
+      console.log("全体処理時間: " + (endTime - startTime));
+    };
+    aaaa();
+  //   }
+  // } else {
+  //   console.log("sign inへ")
+  //   obj = {
+  //     status:401
+  //   }
+  //   res.json(obj);
+  // }
 });
 
 function getStringFromDate(date) {

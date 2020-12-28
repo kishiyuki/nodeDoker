@@ -25,6 +25,7 @@
     "node-fetch": "^2.1.2",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "perf_hooks": "0.0.1",
     "pug": "2.0.0-beta11",
     "util": "^0.12.3"
   },
