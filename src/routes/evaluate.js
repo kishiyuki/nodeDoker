@@ -255,15 +255,15 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       // console.log(evaluationStatement);
       hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
       txStime = await performance.now();
-      atx = iost.call("Contract4MVFpKKfe2oVdJB48BfcPTNuCfbG8QNm2vz6jkE1WWGu", "add", [address,hash]);
+      atx = iost.call("Contract7DvGHVpAP89Y8FVyDs8ZRwXKe42qceyehyCVLHDSEZi5", "add", [address,hash]);
       // console.log(atx);
       handler = iost.signAndSend(atx);
       handler.listen();
       txEtime =  await performance.now();
       await console.log("iosttime: " + (txEtime - txStime));
-      // handler.onPending(console.log);
-      // handler.onSuccess(console.log);
-      // handler.onFailed(console.log);
+      handler.onPending(console.log);
+      handler.onSuccess(console.log);
+      handler.onFailed(console.log);
       connection.query('insert into evaluates set ? ;', {
         action: req.body.action,
         think: req.body.think,
