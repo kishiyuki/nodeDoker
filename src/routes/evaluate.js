@@ -262,9 +262,9 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       handler.listen();
       txEtime =  await performance.now();
       await console.log("iosttime: " + (txEtime - txStime));
-      handler.onPending(console.log);
-      handler.onSuccess(console.log);
-      handler.onFailed(console.log);
+      // handler.onPending(console.log);
+      // handler.onSuccess(console.log);
+      // handler.onFailed(console.log);
       connection.query('insert into evaluates set ? ;', {
         action: req.body.action,
         think: req.body.think,
