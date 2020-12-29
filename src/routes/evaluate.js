@@ -100,7 +100,6 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
                   body("team").not().isEmpty().withMessage("チームを入力してください。").isNumeric().withMessage("チームに数字を入力してください。")
                 　],(req, res, next) =>{
   const errors = validationResult(req);
-  console.log(req.body);
   let profession = "";
   let bool = false;
   let obj = {};
@@ -325,7 +324,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       catch(e){
         console.log(e.message);
       }
-      console.log("全体処理時間: " + (endTime - startTime));
+      console.log("alltime: " + (endTime - startTime));
     };
     aaaa();
   //   }
