@@ -1,4 +1,5 @@
 const { performance } = require('perf_hooks');
+const fs = require("fs");
 var express = require('express');
 var router = express.Router();
 let mysql = require('mysql2');
@@ -99,6 +100,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
                   body("team").not().isEmpty().withMessage("チームを入力してください。").isNumeric().withMessage("チームに数字を入力してください。")
                 　],(req, res, next) =>{
   const errors = validationResult(req);
+  console.log(req.body);
   let profession = "";
   let bool = false;
   let obj = {};
@@ -239,6 +241,8 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
   let evaluationStatement = "";
   let hash;
   let atx;
+  var txEtime;
+  var txStime
   async function add(){
     // if(bool){
       if(req.body.free != null){
@@ -251,16 +255,16 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       evaluationStatement = req.body.action.toString() + req.body.think.toString() + req.body.team.toString() + req.body.comments.toString() + address.toString() + freeStatement;
       // console.log(evaluationStatement);
       hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
-      var txStime = await performance.now();
+      txStime = await performance.now();
       atx = iost.call("Contract2QfR7jsAJajLh7PxwGVu1kzvpoqBF59sVDV5dxWoch3k", "add", [address,hash]);
       // console.log(atx);
       handler = iost.signAndSend(atx);
       handler.listen();
-      var txEtime =  await performance.now();
-      await console.log("txtime: " + (txEtime - txStime));
-      // handler.onPending(console.log);
-      // handler.onSuccess(console.log);
-      // handler.onFailed(console.log);
+      txEtime =  await performance.now();
+      await console.log("iosttime: " + (txEtime - txStime));
+      handler.onPending(console.log);
+      handler.onSuccess(console.log);
+      handler.onFailed(console.log);
       connection.query('insert into evaluates set ? ;', {
         action: req.body.action,
         think: req.body.think,
@@ -314,6 +318,13 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       var startTime = await performance.now();
       await total();
       var endTime = await performance.now();
+      try{
+        fs.appendFileSync("all.txt", (endTime - startTime) + "\n");
+        fs.appendFileSync("iost.txt", (txEtime - txStime) + "\n");
+      }
+      catch(e){
+        console.log(e.message);
+      }
       console.log("全体処理時間: " + (endTime - startTime));
     };
     aaaa();
