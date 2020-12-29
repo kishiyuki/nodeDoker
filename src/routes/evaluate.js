@@ -255,7 +255,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       // console.log(evaluationStatement);
       hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
       txStime = await performance.now();
-      atx = iost.call("ContractADzcjUpHBqhvDTsrnFY8LkHT1zM5G5svd4eqwJvoysLs", "add", [address,hash]);
+      atx = iost.call("ContractFvpku1CJVJKfknEqq12Q1HzrQuK8iyzai6wHBwE8HzRX", "add", [address,hash]);
       // console.log(atx);
       handler = iost.signAndSend(atx);
       handler.listen();
