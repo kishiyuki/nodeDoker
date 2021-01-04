@@ -227,7 +227,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       address = req.body.event_id.toString() + "_" + sender.id.toString() + "_" + req.body.receiver_id.toString();
       const evaluates = await query('select * from evaluates where event_id = ' + req.body.event_id.toString() + ' and sender_id = ' + sender.id.toString() + ' and receiver_id = ' + req.body.receiver_id.toString() + ';');
       if(evaluates.length != 0){
-        dtx = iost.call("ContractCSzBM2TLiunN71J8ZgxSYFCGpPCfvR3vJWLSYdibQjoB", "destroy", [address]);
+        dtx = iost.call("ContractECj2cXk7iQW4i3uDCTXTkVpVL2PvkDr3zdpFbvvDoGSG", "destroy", [address]);
         iost.signAndSend(dtx);
         handler = iost.signAndSend(dtx);
         handler.listen();
@@ -269,7 +269,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       // console.log(evaluationStatement);
       hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
       // txStime = await performance.now();
-      atx = iost.call("ContractCSzBM2TLiunN71J8ZgxSYFCGpPCfvR3vJWLSYdibQjoB", "add", [address,hash]);
+      atx = iost.call("ContractECj2cXk7iQW4i3uDCTXTkVpVL2PvkDr3zdpFbvvDoGSG", "add", [address,hash]);
       // console.log(atx);
       handler = iost.signAndSend(atx);
       handler.listen();
