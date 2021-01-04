@@ -353,7 +353,7 @@ router.get('/', function (req, res, next) {
                 console.log(evaluationStatement);
                 hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
                 await getHistory(
-                    'ContractCd8WSt1F3N8Kb7PF2JAEZM81HhxWqHKdKEDDvhpDvCDC',
+                    'ContractCSzBM2TLiunN71J8ZgxSYFCGpPCfvR3vJWLSYdibQjoB',
                     'admin',
                     student[i].txhash
                 ).catch(function(reason){
@@ -394,6 +394,7 @@ router.get('/', function (req, res, next) {
             ss[2] = {
                 team: steamscore
             }
+            social.sort(compare);
         }
     }
     async function teacherScore() {
@@ -434,7 +435,7 @@ router.get('/', function (req, res, next) {
                 console.log(evaluationStatement);
                 hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
                 await getHistory(
-                    'ContractCd8WSt1F3N8Kb7PF2JAEZM81HhxWqHKdKEDDvhpDvCDC',
+                    'ContractCSzBM2TLiunN71J8ZgxSYFCGpPCfvR3vJWLSYdibQjoB',
                     'admin',
                     teacher[i].txhash
                 ).catch(function(reason){
@@ -475,6 +476,7 @@ router.get('/', function (req, res, next) {
             ts[2] = {
                 team: tteamscore
             }
+            social2.sort(compare);
         }
     }
     async function total() {

@@ -19,7 +19,9 @@ let connection = mysql.createConnection({
 // let db = require('./models/index');
 const bcrypt = require('bcrypt');
 const query = util.promisify(connection.query).bind(connection);
-var user_cache = {};
+setInterval(function () {
+  connection.query('SELECT 1');
+}, 5000);
 
 let indexRouter = require('./routes/index');
 let signupRouter = require('./routes/signup');

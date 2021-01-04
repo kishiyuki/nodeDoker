@@ -2,6 +2,20 @@ var express = require('express');
 var router = express.Router();
 const mysql = require('mysql2');
 const util = require('util');
+const IOST = require('@kunroku/iost')
+const crypto = require('crypto');
+const iost = new IOST({
+  host: 'http://iost:30001',
+  chainId: 1020,
+  gasLimit: 1000000
+});
+const creatorId = 'admin';
+const secretKey = '2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1';
+const account = new IOST.Account(creatorId);
+const kp = new IOST.KeyPair.Ed25519(IOST.Bs58.decode(secretKey));
+account.addKeyPair("active", kp);
+account.addKeyPair("owner", kp);
+iost.setPublisher(account);
 let connection = mysql.createConnection({
   host: 'mysql',
   user: 'root',
@@ -12,6 +26,11 @@ const query = util.promisify(connection.query).bind(connection);
 /* GET home page. */
 router.get('/', function(req, res, next) {
   let obj={};
+  let scount = 0;
+  let tcount = 0;
+  let freeid = [];
+  let freenum = [];
+  let freeStatement;
   let username = "";
 	let profession2 = "";
   let id2 = 0;
@@ -114,35 +133,60 @@ router.get('/', function(req, res, next) {
       const student = await query('select * from evaluates where receiver_id = ' + id2.toString() + searchname + ';');
       if(student.length != 0){
         for(var i = 0; i<student.length; i++){
-          stotalactionscore = stotalactionscore + student[i].action;
-          stotalthinkscore = stotalthinkscore + student[i].think;
-          stotalteamscore = stotalteamscore + student[i].team;
-          if (evaluates_free.length != 0) {
-            for (var j = 0; j < evaluates_free.length; j++) {
-                for (var k = 0; k < free.length; k++) {
-                    if(student[i].id == evaluates_free[j].evaluate_id){
-                        if (evaluates_free[j].free_id == free[k].id) {
-                            social[k].count++;
-                        }
-                    }
-                }
-            }
+          freeid[i] = [];
+          freeStatement = "";
+          for (var j = 0; j < evaluates_free.length; j++) {
+              if (student[i].id == evaluates_free[j].evaluate_id) {
+                  freeid[0][c] = evaluates_free[j].free_id;
+                  freeStatement = freeStatement + evaluates_free[j].free_id.toString();
+                  freenum[c] = freeid[0][c];
+                  c++;
+              }
           }
+          evaluationStatement = student[i].action.toString() + student[i].think.toString() + student[i].team.toString() + student[i].comments.toString() + student[i].txhash.toString() + freeStatement;
+          hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
+          await getHistory(
+            'ContractCSzBM2TLiunN71J8ZgxSYFCGpPCfvR3vJWLSYdibQjoB',
+            'admin',
+            student[i].txhash
+          ).catch(function(reason){
+          })
+          .then(function(reason){
+            if(reason != null){
+              if(reason[0] == hash){
+                scount++;
+                stotalactionscore = stotalactionscore + student[i].action;
+                stotalthinkscore = stotalthinkscore + student[i].think;
+                stotalteamscore = stotalteamscore + student[i].team;
+                if (evaluates_free.length != 0) {
+                  for (var j = 0; j < evaluates_free.length; j++) {
+                      for (var k = 0; k < free.length; k++) {
+                          if(student[i].id == evaluates_free[j].evaluate_id){
+                              if (evaluates_free[j].free_id == free[k].id) {
+                                  social[k].count++;
+                              }
+                          }
+                      }
+                  }
+                }
+              }
+            }
+          });
         }
-          sactionscore = Math.round(stotalactionscore/student.length*10) /10;
-          sthinkscore = Math.round(stotalthinkscore/student.length*10) /10;
-          steamscore = Math.round(stotalteamscore/student.length*10) /10;
+        sactionscore = Math.round(stotalactionscore/scount*10) /10;
+        sthinkscore = Math.round(stotalthinkscore/scount*10) /10;
+        steamscore = Math.round(stotalteamscore/scount*10) /10;
+        ss[0] = {
+          action:sactionscore
+        }
+        ss[1] = {
+          think:sthinkscore
+        }
+        ss[2] = {
+          team:steamscore
+        }
+        social.sort(compare);
       }
-      ss[0] = {
-        action:sactionscore
-      }
-      ss[1] = {
-        think:sthinkscore
-      }
-      ss[2] = {
-        team:steamscore
-      }
-      social.sort(compare);
     }
   }
 
@@ -167,35 +211,61 @@ router.get('/', function(req, res, next) {
       const teacher = await query('select * from evaluates where receiver_id = ' + id2.toString() + searchname2 + ';');
       if(teacher.length != 0){
         for(var i = 0; i<teacher.length; i++){
-          ttotalactionscore = ttotalactionscore + teacher[i].action;
-          ttotalthinkscore = ttotalthinkscore + teacher[i].think;
-          ttotalteamscore = ttotalteamscore + teacher[i].team;
-          if (evaluates_free.length != 0) {
-            for (var j = 0; j < evaluates_free.length; j++) {
-                for (var k = 0; k < free.length; k++) {
-                    if(teacher[i].id == evaluates_free[j].evaluate_id){
-                        if (evaluates_free[j].free_id == free[k].id) {
-                            social2[k].count++;
-                        }
-                    }
-                }
-            }
+          c = 0;
+          freeid[i] = [];
+          freeStatement = "";
+          for (var j = 0; j < evaluates_free.length; j++) {
+              if (teacher[i].id == evaluates_free[j].evaluate_id) {
+                  freeid[0][c] = evaluates_free[j].free_id;
+                  freeStatement = freeStatement + evaluates_free[j].free_id.toString();
+                  freenum[c] = freeid[0][c];
+                  c++;
+              }
           }
+          evaluationStatement = teacher[i].action.toString() + teacher[i].think.toString() + teacher[i].team.toString() + teacher[i].comments.toString() + teacher[i].txhash + freeStatement;
+          hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
+          await getHistory(
+            'ContractCSzBM2TLiunN71J8ZgxSYFCGpPCfvR3vJWLSYdibQjoB',
+            'admin',
+            teacher[i].txhash
+          ).catch(function(reason){
+          })
+          .then(function(reason){
+            if(reason != null){
+              if(reason[0] == hash){
+                tcount++;
+                ttotalactionscore = ttotalactionscore + teacher[i].action;
+                ttotalthinkscore = ttotalthinkscore + teacher[i].think;
+                ttotalteamscore = ttotalteamscore + teacher[i].team;
+                if (evaluates_free.length != 0) {
+                  for (var j = 0; j < evaluates_free.length; j++) {
+                      for (var k = 0; k < free.length; k++) {
+                          if(teacher[i].id == evaluates_free[j].evaluate_id){
+                              if (evaluates_free[j].free_id == free[k].id) {
+                                  social2[k].count++;
+                              }
+                          }
+                      }
+                  }
+                }
+              }
+            }
+          });
         }
-        tactionscore = Math.round(ttotalactionscore/teacher.length*10) /10;
-        tthinkscore = Math.round(ttotalthinkscore/teacher.length*10) /10;
-        tteamscore = Math.round(ttotalteamscore/teacher.length*10) /10;
+        tactionscore = Math.round(ttotalactionscore/tcount*10) /10;
+        tthinkscore = Math.round(ttotalthinkscore/tcount*10) /10;
+        tteamscore = Math.round(ttotalteamscore/tcount*10) /10;
+        ts[0] = {
+          action:tactionscore
+        }
+        ts[1] = {
+          think:tthinkscore
+        }
+        ts[2] = {
+          team:tteamscore
+        }
+        social2.sort(compare);
       }
-      ts[0] = {
-        action:tactionscore
-      }
-      ts[1] = {
-        think:tthinkscore
-      }
-      ts[2] = {
-        team:tteamscore
-      }
-      social2.sort(compare);
       obj = {
         profession:profession2,
         eventlist:eventlist,
@@ -268,6 +338,21 @@ router.get('/', function(req, res, next) {
     res.json(obj);
   }
 });
+
+async function getHistory(address, id, attr) {
+  const history = [];
+  (await async function recursive(current) {
+      if (current === null) return;
+      const { receipts } = await iost.rpc.transaction.getTxReceiptByTxHash(current);
+      const item = receipts
+          .filter(({ func_name }) => func_name === `${address}/add`)
+          .map(({ content }) => JSON.parse(content))
+          .filter(item => item.attr === attr)[0];
+      history.unshift(item.action);
+      await recursive(item.prev);
+  }((await iost.rpc.blockchain.getContractStorage(address, id, attr)).data));
+  return history;
+}
 
 function compare( a, b ){
   var r = 0;
