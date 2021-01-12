@@ -24,6 +24,9 @@ let connection = mysql.createConnection({
     password: 'secret',
     database: 'portfoliopj'
 });
+setInterval(function () {
+    connection.query('SELECT 1');
+  }, 5000);
 const query = util.promisify(connection.query).bind(connection);
 router.get('/', function (req, res, next) {
     let obj = {};
