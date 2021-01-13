@@ -29,6 +29,7 @@ const query = util.promisify(connection.query).bind(connection);
 /* GET home page. */
 router.get('/', function(req, res, next) {
   let obj={};
+  let email;
   let scount = 0;
   let tcount = 0;
   let freeid = [];
@@ -66,6 +67,7 @@ router.get('/', function(req, res, next) {
       if(req.user.email == users[i].email){
         id2 = users[i].id;
         username = users[i].user_name;
+        email = req.user.email;
         profession2 = users[i].profession;
       }
     }
@@ -273,6 +275,7 @@ router.get('/', function(req, res, next) {
         profession:profession2,
         eventlist:eventlist,
         username:username,
+        email:email,
         ss:ss,
         social:social,
         ts:ts,

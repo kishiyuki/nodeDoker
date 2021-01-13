@@ -17,17 +17,17 @@ router.get('/', function(req, res, next){
   let obj = {};
   let teachers = [];
   let tags = [];
-  // let profession = "";
+  let profession = "";
    async function create(){
-  //   const users = await query('select * from users;');
-  //   if (req.user.email) {
-  //     for (i = 0; i < users.length; i++) {
-  //       if(req.user.email == users[i].email){
-  //         profession = users[i].profession;
-  //       }
-  //     }
-  //   }
-  //   if(profession == "school"){
+    const users = await query('select * from users;');
+    if (req.user.email) {
+      for (i = 0; i < users.length; i++) {
+        if(req.user.email == users[i].email){
+          profession = users[i].profession;
+        }
+      }
+    }
+    if(profession == "school"){
       const teacher = await query('select id,user_name from users where profession = "teacher";');
       const tag = await query('select * from tags;');
       teachers = teacher;
@@ -37,23 +37,23 @@ router.get('/', function(req, res, next){
         tags:tags
       }
       res.json(obj);
-  //   } else {
-  //     console.log("学校アカウントじゃ無いから作成できないよ。マイページへ");
-  //     obj = {
-  //       status:400
-  //     }
-  //     res.json(obj);
-  //   }
+    } else {
+      console.log("学校アカウントじゃ無いから作成できないよ。マイページへ");
+      obj = {
+        status:401
+      }
+      res.json(obj);
+    }
    }
-  // if(req.user){
+  if(req.user){
      create();
-  // } else {
-  //   console.log("sign inページへ");
-  //   obj = {
-  //     status:401
-  //   }
-  //   res.json(obj);
-  // }
+  } else {
+    console.log("sign inページへ");
+    obj = {
+      status:401
+    }
+    res.json(obj);
+  }
 });
 router.post('/', [body("event_name").not().isEmpty().withMessage("イベント名を入力してください。").isLength({min:0,max:30000}).withMessage("イベント名が長過ぎます。"),
                   body("start_day").isISO8601().withMessage("開催日を入力してください。").isAfter(getStringFromDate(new Date())).withMessage("開催日が過ぎています。"),
