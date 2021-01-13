@@ -87,32 +87,32 @@ router.get('/', function(req, res, next){
       if(events_students.length == 0){
         if(deadline >= today2){
           branch = 0;
-          console.log("参加できるよ");
+          //参加できるよ
         } else {
           branch = 1;
-          console.log("締め切ってるのでみれないよ");
+          //締め切ってるのでみれないよ
         }
       } else {
         if(lastday2 >= today2){
           branch = 2;
-          console.log("参加者リストのみ");
+          //参加者リストのみ
         } else {
           branch = 3;
-          console.log("評価確認と参加者リスト");
+          //評価確認と参加者リスト
         }
       }
     } else if (profession2 == "teacher"){
       const events_teachers = await query("select * from events_teachers where event_id = " + req.query.event_id + " and teacher_id =" + id2.toString() + ";");
       if(events_teachers2.length == 0){
         branch = 1;
-        console.log("参加してないから見れないよ");
+        //参加してないから見れないよ
       } else {
         branch = 2;
-        console.log("参加者リスト");
+        //参加者リスト
       }
     } else if(profession2 = "school"){
       branch = 2;
-      console.log("参加者リスト");
+      //参加者リスト
     }
   }
   async function total() {
@@ -148,13 +148,13 @@ router.post('/', function(req, res, next){
         },
         function(err, success){
           if (err == null) {
-            console.log("成功したのでイベントallに戻る");
+            //成功したのでイベントallに戻る
             obj = {
               status:200
             };
             res.json(obj);
           } else {
-            console.log("ミスしたのでイベントページに戻る");
+            c//ミスしたのでイベントページに戻る
             obj = {
               status:500
             };
@@ -164,7 +164,7 @@ router.post('/', function(req, res, next){
         }
         );
       } else {
-        console.log("参加資格がないのでイベントページに戻る");
+        //参加資格がないのでイベントページに戻る
         obj = {
           status:400
         };
