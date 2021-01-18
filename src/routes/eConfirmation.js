@@ -173,9 +173,11 @@ router.get('/', function (req, res, next) {
                     }
                 });
             }
-            sactionscore = Math.round(stotalactionscore / a * 10) / 10;
-            sthinkscore = Math.round(stotalthinkscore / a * 10) / 10;
-            steamscore = Math.round(stotalteamscore / a * 10) / 10;
+            if(a != 0){
+                sactionscore = Math.round(stotalactionscore / a * 10) / 10;
+                sthinkscore = Math.round(stotalthinkscore / a * 10) / 10;
+                steamscore = Math.round(stotalteamscore / a * 10) / 10;
+            }
 
             ss[0] = {
                 action: sactionscore
@@ -255,9 +257,11 @@ router.get('/', function (req, res, next) {
                     }
                 });
             }
-            tactionscore = Math.round(ttotalactionscore / a * 10) / 10;
-            tthinkscore = Math.round(ttotalthinkscore / a * 10) / 10;
-            tteamscore = Math.round(ttotalteamscore / a * 10) / 10;
+            if(a != 0){
+                tactionscore = Math.round(ttotalactionscore / a * 10) / 10;
+                tthinkscore = Math.round(ttotalthinkscore / a * 10) / 10;
+                tteamscore = Math.round(ttotalteamscore / a * 10) / 10;
+            }
 
             ts[0] = {
                 action: tactionscore

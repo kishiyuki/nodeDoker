@@ -69,54 +69,6 @@ passport.deserializeUser(function(username, done) {
   done(null, {email:username});
 });
 
-// authentication
-// passport.serializeUser(function(email, done) {
-// 	console.log('serializeUser');
-//   connection.query('select * from users where email = "' + email + '";', function(err, user) {
-//     let userId = user[0].id;
-//     console.log(user[0].id);
-//   	done(null, userId); // to deserializeUser
-//   });
-// });
-//
-// passport.deserializeUser(function(userId, done) {
-// 	console.log('deserializeUser');
-// 	done(null, {
-//     userId: userId
-//   });
-// });
-
-// passport.use(new LocalStrategy(
-// 	{
-// 		emailField: 'email',
-// 		passwordField: 'password'
-// 	},
-// 	function(email, password, done){
-// 		connection.query('select * from users;', function(err, users) {
-// 			// usernameもpasswordもユニーク前提
-// 			let email2 = "";
-// 			let password2 = "";
-// 			for (i = 0; i < users.length; i++) {
-// 				if(email == users[i].email){
-//           email2 = users[i].email;
-//           password2 = users[i].password.toString();
-//         }
-// 				// input(type='password')で渡される値はstringのようなので、
-// 				// データベースから取り出した値もstringにしています。
-// 			}
-//       console.log(email)
-// 			console.log(email2);
-//       console.log(password.toString());
-// 			console.log(password2.toString());
-// 			console.log(bcrypt.compareSync(password.toString(), password2.toString()));
-// 			if (bcrypt.compareSync(password.toString(), password2.toString())) {
-//         return done(null, email2); // to serializeUser
-// 			}
-// 			return done(null, false, {message: 'invalid'});
-// 		});
-// 	}
-// ));
-
 passport.use(new LocalStrategy(
 	{
 		usernameField: 'email',

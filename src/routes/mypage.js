@@ -178,9 +178,11 @@ router.get('/', function(req, res, next) {
             }
           });
         }
-        sactionscore = Math.round(stotalactionscore/scount*10) /10;
-        sthinkscore = Math.round(stotalthinkscore/scount*10) /10;
-        steamscore = Math.round(stotalteamscore/scount*10) /10;
+        if(scount != 0){
+          sactionscore = Math.round(stotalactionscore/scount*10) /10;
+          sthinkscore = Math.round(stotalthinkscore/scount*10) /10;
+          steamscore = Math.round(stotalteamscore/scount*10) /10;
+        }
         ss[0] = {
           action:sactionscore
         }
@@ -257,9 +259,11 @@ router.get('/', function(req, res, next) {
             }
           });
         }
-        tactionscore = Math.round(ttotalactionscore/tcount*10) /10;
-        tthinkscore = Math.round(ttotalthinkscore/tcount*10) /10;
-        tteamscore = Math.round(ttotalteamscore/tcount*10) /10;
+        if(tcount != 0){
+          tactionscore = Math.round(ttotalactionscore/tcount*10) /10;
+          tthinkscore = Math.round(ttotalthinkscore/tcount*10) /10;
+          tteamscore = Math.round(ttotalteamscore/tcount*10) /10;
+        }
         ts[0] = {
           action:tactionscore
         }
