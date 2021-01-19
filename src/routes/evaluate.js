@@ -160,14 +160,18 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
   }
   async function getSR(){
     const users = await query('select id,user_name,email,profession from users;');
-    if (req.user.email) {
+    // if (req.user.email) {
       for (i = 0; i < users.length; i++) {
-        if(req.user.email == users[i].email){
+        // if(req.user.email == users[i].email){
+        //   id = users[i].id;
+        //   profession = users[i].profession;
+        // }
+        if(req.body.email == users[i].email){
           id = users[i].id;
           profession = users[i].profession;
         }
       }
-    }
+    // }
     if(profession == "student"){
       const events_students_con = await query('select * from events_students where event_id = ' + req.body.event_id + ' and student_id = ' + id +';');
       if(events_students_con != 0){
@@ -181,7 +185,10 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
     }
     if(users.length != 0){
       for (i = 0; i < users.length; i++) {
-        if(req.user.email == users[i].email){
+        // if(req.user.email == users[i].email){
+        //   sender = users[i];
+        // }
+        if(req.body.email == users[i].email){
           sender = users[i];
         }
         if(req.body.receiver_id == users[i].id){
@@ -198,7 +205,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       address = req.body.event_id.toString() + "_" + sender.id.toString() + "_" + req.body.receiver_id.toString();
       const evaluates = await query('select * from evaluates where event_id = ' + req.body.event_id.toString() + ' and sender_id = ' + sender.id.toString() + ' and receiver_id = ' + req.body.receiver_id.toString() + ';');
       if(evaluates.length != 0){
-        dtx = iost.call("ContractECj2cXk7iQW4i3uDCTXTkVpVL2PvkDr3zdpFbvvDoGSG", "destroy", [address]);
+        dtx = iost.call(process.env.contractid, "destroy", [address]);
         iost.signAndSend(dtx);
         handler = iost.signAndSend(dtx);
         handler.listen();
@@ -228,7 +235,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
   // var txEtime;
   // var txStime
   async function add(){
-    if(bool){
+    // if(bool){
       if(req.body.free != null){
         for(var i = 0; i<req.body.free.length; i++){
           freeStatement = freeStatement + req.body.free[i].toString();
@@ -240,7 +247,7 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
       // console.log(evaluationStatement);
       hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
       // txStime = await performance.now();
-      atx = iost.call("ContractECj2cXk7iQW4i3uDCTXTkVpVL2PvkDr3zdpFbvvDoGSG", "add", [address,hash]);
+      atx = iost.call(process.env.contractid, "add", [address,hash]);
       // console.log(atx);
       handler = iost.signAndSend(atx);
       handler.listen();
@@ -282,31 +289,31 @@ router.post('/', [body("action").not().isEmpty().withMessage("アクションを
           console.log(err);
         }
       });
-    }
+    // }
   }
   async function total(){
     await getSR();
-    await destroy();
+  //   await destroy();
     await add();
-    // console.log("参加者リストへ")
+  //   // console.log("参加者リストへ")
     obj = {
       status:200
     }
     res.json(obj);
   }
-  if(req.user){
-    if (!errors.isEmpty()) {
-      getESR();
-    }else {
+  // if(req.user){
+  //   if (!errors.isEmpty()) {
+  //     getESR();
+  //   }else {
       total();
-    }
-  } else {
-    console.log("sign inへ")
-    obj = {
-      status:401
-    }
-    res.json(obj);
-  }
+  //   }
+  // } else {
+  //   console.log("sign inへ")
+  //   obj = {
+  //     status:401
+  //   }
+  //   res.json(obj);
+  // }
 });
 
 function getStringFromDate(date) {

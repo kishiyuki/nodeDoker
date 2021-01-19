@@ -149,7 +149,7 @@ router.get('/', function(req, res, next) {
           evaluationStatement = student[i].action.toString() + student[i].think.toString() + student[i].team.toString() + student[i].comments.toString() + student[i].txhash.toString() + freeStatement;
           hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
           await getHistory(
-            'ContractECj2cXk7iQW4i3uDCTXTkVpVL2PvkDr3zdpFbvvDoGSG',
+            process.env.contractid,
             'admin',
             student[i].txhash
           ).catch(function(reason){
@@ -228,7 +228,7 @@ router.get('/', function(req, res, next) {
           evaluationStatement = teacher[i].action.toString() + teacher[i].think.toString() + teacher[i].team.toString() + teacher[i].comments.toString() + teacher[i].txhash + freeStatement;
           hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
           await getHistory(
-            'ContractECj2cXk7iQW4i3uDCTXTkVpVL2PvkDr3zdpFbvvDoGSG',
+            process.env.contractid,
             'admin',
             teacher[i].txhash
           ).catch(function(reason){

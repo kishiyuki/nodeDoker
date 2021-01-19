@@ -144,7 +144,7 @@ router.get('/', function (req, res, next) {
                 console.log(evaluationStatement);
                 hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
                 await getHistory(
-                    'ContractCd8WSt1F3N8Kb7PF2JAEZM81HhxWqHKdKEDDvhpDvCDC',
+                    process.env.contractid,
                     'admin',
                     student[i].txhash
                 ).catch(function(reason){
@@ -227,7 +227,7 @@ router.get('/', function (req, res, next) {
                 console.log(evaluationStatement);
                 hash = crypto.createHash('sha256').update(evaluationStatement, 'utf8').digest('hex');
                 await getHistory(
-                    'ContractCd8WSt1F3N8Kb7PF2JAEZM81HhxWqHKdKEDDvhpDvCDC',
+                    process.env.contractid,
                     'admin',
                     teacher[i].txhash
                 ).catch(function(reason){
