@@ -6,7 +6,9 @@ let connection = mysql.createConnection({
   host: 'mysql',
   user: 'root',
   password: 'secret',
-  database: 'portfoliopj'
+  database: 'portfoliopj',
+  timezone: 'UTC',
+  dateStrings: true
 });
 setInterval(function () {
   connection.query('SELECT 1');

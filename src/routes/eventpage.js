@@ -6,7 +6,9 @@ let connection = mysql.createConnection({
   host: 'mysql',
   user: 'root',
   password: 'secret',
-  database: 'portfoliopj'
+  database: 'portfoliopj',
+  timezone: 'UTC',
+  dateStrings: true
 });
 setInterval(function () {
   connection.query('SELECT 1');
@@ -103,7 +105,7 @@ router.get('/', function(req, res, next){
       }
     } else if (profession2 == "teacher"){
       const events_teachers = await query("select * from events_teachers where event_id = " + req.query.event_id + " and teacher_id =" + id2.toString() + ";");
-      if(events_teachers.length == 0){
+      if(events_teachers2.length == 0){
         branch = 1;
         //参加してないから見れないよ
       } else {

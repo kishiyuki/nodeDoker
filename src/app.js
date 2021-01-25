@@ -14,7 +14,9 @@ let connection = mysql.createConnection({
   host: 'mysql',
   user: 'root',
   password: 'secret',
-  database: 'portfoliopj'
+  database: 'portfoliopj',
+  timezone: 'UTC',
+  dateStrings: true
 });
 // let db = require('./models/index');
 const bcrypt = require('bcrypt');
@@ -23,7 +25,7 @@ setInterval(function () {
   connection.query('SELECT 1');
 }, 5000);
 
-process.env.contractid = `ContractAtrhze6eSZ4GhxL2odGALBmLTq4twqJ9NrMxBBYWzqvn`;
+process.env.contractid = `Contract7Sv1Eq4JNQ75LfdvGLHskUDiZZdbL6Ff7kbDRJyJr9mx`;
 
 let indexRouter = require('./routes/index');
 let signupRouter = require('./routes/signup');
