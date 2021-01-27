@@ -15,7 +15,6 @@ let connection = mysql.createConnection({
   user: 'root',
   password: 'secret',
   database: 'portfoliopj',
-  timezone: 'UTC',
   dateStrings: true
 });
 // let db = require('./models/index');

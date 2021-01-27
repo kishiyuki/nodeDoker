@@ -23,7 +23,6 @@ let connection = mysql.createConnection({
     user: 'root',
     password: 'secret',
     database: 'portfoliopj',
-    timezone: 'UTC',
     dateStrings: true
 });
 setInterval(function () {
