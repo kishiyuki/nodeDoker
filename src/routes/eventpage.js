@@ -20,13 +20,11 @@ router.get('/', function(req, res, next){
   var tagid = [];
   var tagname = [];
   let eventlist = [];
-  var today = getStringFromDate(new Date());
-  var today2 = new Date(today);
+  var today2 = new Date();
   var teachername =[];
   var branch = 1;
   var c = 0;
   var deadline;
-  var lastday;
   var lastday2;
   async function getUser() {
     const users = await query('select * from users;');
@@ -80,7 +78,8 @@ router.get('/', function(req, res, next){
 
   async function part() {
     const events = await query('select * from events where id = ' + req.query.event_id + ';');
-    lastday = getStringFromDate3(events[0].last_day);
+    lastday2 = new Date(events[0].last_day);
+    lastday = getStringFromDate3(lastday2);
     lastday2 = new Date(lastday);
     deadline = new Date(events[0].deadline);
     if(profession2 == "student"){

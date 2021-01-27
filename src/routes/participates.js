@@ -53,10 +53,12 @@ router.get('/', function(req, res, next){
     if(bool){
       const events = await query('select * from events where id = ' + req.query.event_id + ';');
       const events_students = await query('select * from events_students where event_id = ' + req.query.event_id + ';');
-      startday = getStringFromDate(events[0].start_day);
-      lastday = getStringFromDate3(events[0].last_day);
+      startday = events[0].start_day;
+      lastday = events[0].last_day;
       today2 = new Date(today);
       startday2 = new Date(startday);
+      lastday2 = new Date(lastday);
+      lastday = getStringFromDate3(lastday2);
       lastday2 = new Date(lastday);
       if(events_students.length != 0){
         searchname = events_students[0].student_id;
