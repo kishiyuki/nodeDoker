@@ -24,7 +24,7 @@ setInterval(function () {
   connection.query('SELECT 1');
 }, 5000);
 
-process.env.contractid = `Contract7Sv1Eq4JNQ75LfdvGLHskUDiZZdbL6Ff7kbDRJyJr9mx`;
+process.env.contractid = `ContractBfCG5CEASr9R1yFY31wbSJPnNZnmig9hFSu7BGPiX7KN`;
 
 let indexRouter = require('./routes/index');
 let signupRouter = require('./routes/signup');
